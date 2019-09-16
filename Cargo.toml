@@ -1,0 +1,17 @@
+[package]
+name = "hello_world"
+version = "0.1.0"
+authors = ["Manuel Deval <manuel.deval@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+cpal = { version = "*" }
+failure = "0.1.5"
+rosc = "~0.1"
+bus = "2.2.2"
+#https://github.com/PistonDevelopers/piston
+#https://github.com/PistonDevelopers/piston-examples/blob/master/src/shapes.rs
+piston2d-graphics = "0.35.0"
+piston_window = "0.98.0"
+
+
