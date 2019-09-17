@@ -9,6 +9,8 @@ use crate::synth::baseoscillator::CommonOscillator;
 
 use crate::synth::oscillators::SinNode;
 use crate::synth::oscillators::SquareNode;
+use crate::synth::oscillators::SawNode;
+
 use crate::synth::viz::ScopeNode;
 use crate::synth::converters::lfo_frequency_to_voltage;
 
@@ -26,7 +28,7 @@ impl Synth {
     pub fn new(sample_rate: i32, osc_receiver_factory: OSCReceiverFactory) -> Synth {
         let mut knob = Box::new(KnobNode::new(&osc_receiver_factory,0.0,String::from("/fader")));
         let mut lfo = Box::new(SinNode::new(OscillatorMode::LFO,lfo_frequency_to_voltage(1.0),0.0,true));
-        let mut oscillator = Box::new(SquareNode::new(OscillatorMode::AUDIO,0.0,0.1,true));
+        let mut oscillator = Box::new(SawNode::new(OscillatorMode::AUDIO,0.0,0.1,true,SawNode::TRI));
         // let mut oscillator = Box::new(SinNode::new(OscillatorMode::AUDIO,0.0,0.1,true));
         let mut keyboard = Box::new(KeyboardNode::new(&osc_receiver_factory));
         let mut scope = Box::new(ScopeNode::new());
