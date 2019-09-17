@@ -5,3 +5,4 @@ pub mod osc;
 pub mod baseoscillator;
 pub mod synth;
 pub mod viz;
+pub mod filter;

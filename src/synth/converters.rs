@@ -38,6 +38,14 @@ pub fn voltage_to_zero_to_one(voltage: f32) -> f32 {
   (voltage+1.0)/2.0
 }
 
+pub fn hard_clip(v: f32, min: f32, max: f32) -> f32 {
+  match v {
+    v if v < min => min,
+    v if v > max => max,
+    _ => v
+  }
+}
+
 pub struct MidiNote {
 }
 
