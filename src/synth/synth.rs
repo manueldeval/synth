@@ -10,6 +10,7 @@ use crate::synth::baseoscillator::CommonOscillator;
 use crate::synth::oscillators::SinNode;
 use crate::synth::oscillators::SquareNode;
 use crate::synth::oscillators::SawNode;
+use crate::synth::rand::RandNode;
 
 use crate::synth::filter::MoogFilterNode;
 
@@ -36,7 +37,8 @@ impl Synth {
         let mut lfo  = Box::new(SinNode::new(OscillatorMode::LFO,lfo_frequency_to_voltage(1.0),0.85,true));
         let mut lfo2 = Box::new(SinNode::new(OscillatorMode::LFO,lfo_frequency_to_voltage(0.2),0.85,true));
 
-        let mut oscillator = Box::new(SquareNode::new(OscillatorMode::AUDIO,0.0,0.6,true));//,SawNode::TRI));
+        let mut oscillator = Box::new(RandNode::new(0.3));
+        //let mut oscillator = Box::new(SquareNode::new(OscillatorMode::AUDIO,0.0,0.6,true));//,SawNode::TRI));
         // let mut oscillator = Box::new(SinNode::new(OscillatorMode::AUDIO,0.0,0.1,true));
         let mut keyboard = Box::new(KeyboardNode::new(&osc_receiver_factory));
         let mut scope = Box::new(ScopeNode::new());
@@ -64,10 +66,12 @@ impl Synth {
 
         self.knob.compute();
 
-        self.oscillator.set_input_value(CommonOscillator::INPUT_FREQ, self.keyboard.get_output_value(KeyboardNode::OUTPUT_FREQ));
+        self.oscillator.set_input_value(RandNode::INPUT_TRIGGER, self.keyboard.get_output_value(KeyboardNode::OUTPUT_NOTE_ON));
+       
+        // self.oscillator.set_input_value(CommonOscillator::INPUT_FREQ, self.keyboard.get_output_value(KeyboardNode::OUTPUT_FREQ));
         // self.oscillator.set_input_value(CommonOscillator::INPUT_AMP, self.lfo.get_output_value(CommonOscillator::OUTPUT_OSC));
-        self.oscillator.set_input_value(CommonOscillator::INPUT_TRIGGER, self.keyboard.get_output_value(KeyboardNode::OUTPUT_NOTE_ON));
-        self.oscillator.set_input_value(SquareNode::INPUT_RATIO, self.knob.get_output_value(KnobNode::OUTPUT_VALUE));
+        // self.oscillator.set_input_value(CommonOscillator::INPUT_TRIGGER, self.keyboard.get_output_value(KeyboardNode::OUTPUT_NOTE_ON));
+        //self.oscillator.set_input_value(SquareNode::INPUT_RATIO, self.knob.get_output_value(KnobNode::OUTPUT_VALUE));
 
         self.oscillator.compute();
         

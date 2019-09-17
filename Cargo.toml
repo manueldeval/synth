@@ -9,9 +9,12 @@ cpal = { version = "*" }
 failure = "0.1.5"
 rosc = "~0.1"
 bus = "2.2.2"
+rand = "0.7.2"
+
 #https://github.com/PistonDevelopers/piston
 #https://github.com/PistonDevelopers/piston-examples/blob/master/src/shapes.rs
 piston2d-graphics = "0.35.0"
 piston_window = "0.98.0"
+
 
 
