@@ -7,3 +7,4 @@ pub mod synth;
 pub mod viz;
 pub mod filter;
 pub mod rand;
+pub mod samplehold;
