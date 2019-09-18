@@ -14,6 +14,8 @@ impl RandNode {
   pub const INPUT_AMP: i32 = 0;
   pub const INPUT_TRIGGER: i32 = 1;
 
+  pub const OUTPUT_SIGNAL: i32 = 0;
+
   pub fn new(amp: f32) -> RandNode {
     RandNode { value: 0.0, amp:amp , input_trigger: true }
   }
@@ -29,8 +31,13 @@ impl AudioNode for RandNode {
   }
   fn compute(&mut self) {
     let r : f32 = random();
-    self.value = if self.input_trigger { r * self.amp } else { 0.0 }
+    self.value = if self.input_trigger { (2.0 * r - 1.0) * self.amp } else { 0.0 }
   }
-  fn get_output_value(&mut self, _ouput: i32) -> f32 { self.value }
+  fn get_output_value(&mut self, output: i32) -> f32 { 
+    match output {
+      RandNode::OUTPUT_SIGNAL => self.value ,
+      _ => 0.0
+    }
+  }
 }
 
