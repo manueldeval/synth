@@ -19,18 +19,16 @@ use crate::synth::filter::MoogFilterNode;
 use crate::synth::viz::ScopeNode;
 use crate::synth::converters::lfo_frequency_to_voltage;
 
-
 pub struct Synth {
     knob:  Box<dyn AudioNode + Send>,
-    oscillator: Box<dyn AudioNode + Send>,
+    oscillator: Box<dyn AudioNode+ Send>,
     
-    lfo:  Box<dyn AudioNode + Send>,
-    lfo2:  Box<dyn AudioNode + Send>,
-    sh: Box<dyn AudioNode + Send>,
-
-    keyboard: Box<dyn AudioNode + Send>,
-    filter: Box<dyn AudioNode + Send>,
-    scope: Box<ScopeNode>
+    lfo:  Box<dyn AudioNode+ Send>,
+    lfo2:  Box<dyn AudioNode+ Send>,
+    sh: Box<dyn AudioNode+ Send>,
+    scope: Box<dyn AudioNode+ Send>,
+    keyboard: Box<dyn AudioNode+ Send>,
+    filter: Box<dyn AudioNode+ Send>,
 }
 
 impl Synth {
@@ -52,18 +50,18 @@ impl Synth {
         filter.configure(sample_rate);
 
         Synth { 
-            oscillator: oscillator,
-            lfo: lfo,
-            lfo2: lfo2,
-            keyboard: keyboard,
-            knob: knob,
-            scope: scope,
-            filter: filter,
-            sh: sh
+                oscillator: oscillator,
+                lfo: lfo,
+                lfo2: lfo2,
+                keyboard: keyboard,
+                knob: knob,
+                scope: scope,
+                filter: filter,
+                sh: sh
         }
     }
 
-    pub fn compute(&mut self) -> f32 {
+    pub fn compute( &mut self) -> f32 {
         self.keyboard.compute();
         self.knob.compute();
         self.lfo.compute();
@@ -88,7 +86,7 @@ impl Synth {
 
         // Scope
         self.scope.set_input_value(ScopeNode::INPUT_SIGNAL,self.filter.get_output_value(MoogFilterNode::OUPUT_LP));
-        // self.scope.set_input_value(ScopeNode::INPUT_SIGNAL,self.sh.get_output_value(SampleHoldNode::OUTPUT_SIGNAL));
+        self.scope.set_input_value(ScopeNode::INPUT_SIGNAL,self.sh.get_output_value(SampleHoldNode::OUTPUT_SIGNAL));
         self.scope.compute();
         // Scope
 

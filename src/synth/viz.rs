@@ -64,17 +64,17 @@ impl ScopeNode {
 
           buffer = match rec { Ok(data) => data.buffer, _ => buffer };
           // buffer = match rec { Ok(data) => data.buffer, _ => buffer };
-          let mut zeroCross = 0;
+          let mut zero_cross = 0;
           for i in 1..320 {
             if buffer[i-1]<0.0 && buffer[i]>0.0 {
-              zeroCross = i;
+              zero_cross = i;
             }
           }
           
           window.draw_2d(&event, |context, graphics, _device| {
             clear([1.0; 4], graphics);
             for i in 0..640 {
-              let value = (400.0*(buffer[i+zeroCross]+1.0)/2.0) as f64;
+              let value = (400.0*(buffer[i+zero_cross]+1.0)/2.0) as f64;
               rectangle([1.0, 0.0, 0.0, 1.0], 
                         [i as f64, value+40.0,1.0 , 1.0 ],
                         context.transform,
@@ -104,7 +104,7 @@ impl AudioNode for ScopeNode {
     self.data.current_index = (self.data.current_index+1)%self.data.actual_size;
     self.data.buffer[self.data.current_index] = self.data.value;
     if self.data.current_index == 0 {
-      self.tx.send(self.data.clone());
+      let _res = self.tx.send(self.data.clone());
     }
   }
 
