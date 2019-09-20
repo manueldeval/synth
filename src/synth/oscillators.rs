@@ -21,10 +21,12 @@ impl SinNode{
 }
 
 impl BaseOscillator for SinNode {
-  fn get_common_oscillator(&mut self) -> &mut CommonOscillator {
+  fn get_common_oscillator(&self) -> &CommonOscillator {
+    & (self.common_oscillator)
+  }
+  fn get_common_oscillator_mut(&mut self) -> &mut CommonOscillator {
     &mut (self.common_oscillator)
   }
-
   fn compute_extended(&mut self){
     let radian = self.common_oscillator.sample_clock * self.common_oscillator.oscillator_frequency_hz * 2.0 * 3.141592 / self.common_oscillator.sample_rate;
     self.common_oscillator.value = radian.sin() * self.common_oscillator.oscillator_amp;
@@ -51,7 +53,10 @@ impl SquareNode {
 
 impl BaseOscillator for SquareNode {
   
-  fn get_common_oscillator(&mut self) -> &mut CommonOscillator {
+  fn get_common_oscillator(&self) -> &CommonOscillator {
+    &(self.common_oscillator)
+  }
+  fn get_common_oscillator_mut(&mut self) -> &mut CommonOscillator {
     &mut (self.common_oscillator)
   }
 
@@ -95,10 +100,13 @@ impl SawNode {
 
 impl BaseOscillator for SawNode {
   
-  fn get_common_oscillator(&mut self) -> &mut CommonOscillator {
+  fn get_common_oscillator(& self) -> & CommonOscillator {
+    & (self.common_oscillator)
+  }
+  fn get_common_oscillator_mut(&mut self) -> &mut CommonOscillator {
     &mut (self.common_oscillator)
   }
-
+  
   fn set_input_value_extended(&mut self, input: i32, value: f32){
     match input {
       SawNode::INPUT_RATIO => self.ratio = voltage_to_zero_to_one(value),

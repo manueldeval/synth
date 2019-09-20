@@ -33,7 +33,7 @@ impl AudioNode for RandNode {
     let r : f32 = random();
     self.value = if self.input_trigger { (2.0 * r - 1.0) * self.amp } else { 0.0 }
   }
-  fn get_output_value(&mut self, output: i32) -> f32 { 
+  fn get_output_value(&self, output: i32) -> f32 { 
     match output {
       RandNode::OUTPUT_SIGNAL => self.value ,
       _ => 0.0

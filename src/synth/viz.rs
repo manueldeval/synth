@@ -108,7 +108,7 @@ impl AudioNode for ScopeNode {
     }
   }
 
-  fn get_output_value(&mut self, _ouput: i32) -> f32 { 
+  fn get_output_value(&self, _ouput: i32) -> f32 { 
     self.data.value 
   }
 

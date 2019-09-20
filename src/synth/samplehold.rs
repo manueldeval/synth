@@ -46,7 +46,7 @@ impl AudioNode for SampleHoldNode {
     }
   }
 
-  fn get_output_value(&mut self,ouput: i32) -> f32 {
+  fn get_output_value(&self,ouput: i32) -> f32 {
     match ouput {
       SampleHoldNode::OUTPUT_SIGNAL => self.output_signal,
       _ => 0.0

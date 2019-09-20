@@ -48,10 +48,11 @@ impl CommonOscillator {
 
 
 pub trait BaseOscillator {  
-  fn get_common_oscillator(&mut self) -> &mut CommonOscillator;
-  
+  fn get_common_oscillator(&self) -> &CommonOscillator;
+  fn get_common_oscillator_mut(&mut self) -> &mut CommonOscillator;
+
   fn _set_input_freq(&mut self,value: f32){
-    let mut common = self.get_common_oscillator();
+    let mut common = self.get_common_oscillator_mut();
 
     let oscillator_target_frequency_volt = value;
     if (common.oscillator_frequency_volt - oscillator_target_frequency_volt).abs() < CommonOscillator::INTERPOLATION_STEP {
@@ -64,17 +65,17 @@ pub trait BaseOscillator {
   }
 
   fn _set_input_amp(&mut self, value: f32){
-    let mut common = self.get_common_oscillator();
+    let mut common = self.get_common_oscillator_mut();
     common.oscillator_amp = voltage_to_zero_to_one(value);
   }
 
   fn _set_input_is_on(&mut self, value: f32){
-    let mut common = self.get_common_oscillator();
+    let mut common = self.get_common_oscillator_mut();
     common.is_on = voltage_to_boolean(value);
   }
 
   fn _set_input_sync_phase(&mut self, value: f32){
-    let mut common = self.get_common_oscillator();
+    let mut common = self.get_common_oscillator_mut();
     common.input_sync_phase = voltage_to_boolean(value);
   }
 
@@ -83,7 +84,7 @@ pub trait BaseOscillator {
 
   fn compute_extended(&mut self);
   
-  fn get_output_value_extended(&mut self, _output: i32) -> f32 {
+  fn get_output_value_extended(&self, _output: i32) -> f32 {
     0.0
   }
 }
@@ -91,7 +92,7 @@ pub trait BaseOscillator {
 impl<T> AudioNode for T where T: BaseOscillator {  
 
   fn configure(&mut self,frequency: i32){
-    self.get_common_oscillator().sample_rate = frequency as f32;
+    self.get_common_oscillator_mut().sample_rate = frequency as f32;
   }
   
   fn set_input_value(&mut self, input: i32, value: f32) {
@@ -105,7 +106,7 @@ impl<T> AudioNode for T where T: BaseOscillator {
   }
 
   fn compute(&mut self) {
-    let mut common = self.get_common_oscillator();
+    let mut common = self.get_common_oscillator_mut();
     if common.is_on { 
       common.oscillator_frequency_hz = match common.oscillator_mode {
         OscillatorMode::LFO => voltage_to_lfo_frequency(common.oscillator_frequency_volt),
@@ -125,7 +126,7 @@ impl<T> AudioNode for T where T: BaseOscillator {
     }
   }
 
-  fn get_output_value(&mut self, output: i32) -> f32 { 
+  fn get_output_value(&self, output: i32) -> f32 { 
     let mut common = self.get_common_oscillator();
     match output {
       CommonOscillator::OUTPUT_OSC => common.value,

@@ -9,7 +9,7 @@ pub trait AudioNode {
 
   fn compute(&mut self);
 
-  fn get_output_value(&mut self,ouput: i32) -> f32;
+  fn get_output_value(&self,ouput: i32) -> f32;
 }
 
 /*
@@ -34,7 +34,7 @@ impl AudioNode for ConstantNode {
   
   fn set_input_value(&mut self, _input: i32, _value: f32) { }
   fn compute(&mut self) { }
-  fn get_output_value(&mut self, _ouput: i32) -> f32 { self.value }
+  fn get_output_value(&self, _ouput: i32) -> f32 { self.value }
 }
 
 /*
@@ -60,7 +60,7 @@ impl AudioNode for StdoutNode {
   
   fn set_input_value(&mut self, _input: i32, value: f32) { self.value = value }
   fn compute(&mut self) { println!("{} {}", self.prefix, self.value) }
-  fn get_output_value(&mut self, _ouput: i32) -> f32 { 0.0 }
+  fn get_output_value(&self, _ouput: i32) -> f32 { 0.0 }
 }
 
 /*
@@ -82,5 +82,5 @@ impl NullNode {
 impl AudioNode for NullNode { 
   fn set_input_value(&mut self, _input: i32, _value: f32) { }
   fn compute(&mut self) {  }
-  fn get_output_value(&mut self, _ouput: i32) -> f32 { 0.0 }
+  fn get_output_value(&self, _ouput: i32) -> f32 { 0.0 }
 }

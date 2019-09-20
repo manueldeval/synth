@@ -8,3 +8,5 @@ pub mod viz;
 pub mod filter;
 pub mod rand;
 pub mod samplehold;
+pub mod factory;
+

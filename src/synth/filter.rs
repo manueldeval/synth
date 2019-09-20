@@ -94,7 +94,7 @@ impl AudioNode for MoogFilterNode {
     self.bp_output = 3.0 * (self.coefs[3] - self.coefs[4]);
   }
   
-  fn get_output_value(&mut self, ouput: i32) -> f32 {
+  fn get_output_value(&self, ouput: i32) -> f32 {
     match ouput {
       MoogFilterNode::OUPUT_BP => self.bp_output,
       MoogFilterNode::OUPUT_HP => self.hp_output,
