@@ -6,11 +6,45 @@ use crate::synth::audionode::AudioNode;
 use std::rc::Rc;
 use std::cell::RefCell;
 
+//===============================================================
+// Audio Link
+//===============================================================
+
 pub struct AudioLink {
   remote_node: Weak<RefCell<Vertice>>,
   remote_port: i32,
   local_port: i32
 }
+
+impl AudioLink {
+  pub fn is_pointing_to_id(&self,id: &String) -> bool {
+    let optional_rc_refcell_vertice: Option<Rc<RefCell<Vertice>>> = self.remote_node.upgrade();
+    match optional_rc_refcell_vertice {
+      Some(rc_refcell_vertice) => {
+        rc_refcell_vertice.borrow().id == *id
+      },
+      None => false
+    }
+  }
+
+  pub fn matches(&self,local_port: i32, remote_id: &String, remote_port: i32 ) -> bool {
+    local_port == self.local_port && remote_port == self.remote_port && self.is_pointing_to_id(remote_id)  
+  }
+}
+
+#[cfg(test)]
+mod testAudioLink {
+    use super::*;
+
+    #[test]
+    fn test_divide() {
+        assert_eq!(5, 5);
+    }
+}
+
+//===============================================================
+// Vertice
+//===============================================================
 
 pub struct Vertice {
   id: String,
@@ -21,9 +55,20 @@ pub struct Vertice {
   outputs:   Vec<AudioLink>
 }
 
-/**
- * Graph
- */
+impl Vertice {
+  pub fn remove_input_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
+    self.inputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
+  }
+  pub fn remove_output_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
+    self.outputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
+  }
+}
+
+
+//===============================================================
+// Graph
+//===============================================================
+
 pub struct Graph {
   vertices : Vec<Rc<RefCell<Vertice>>>
 }
@@ -72,7 +117,6 @@ impl Graph {
               remote_port: input_port,
               local_port: output_port
             });
-
             Ok(())
           }
           None => Err(String::from(format!("Input {} node does not exists.",input_node_id)))
@@ -82,6 +126,35 @@ impl Graph {
     }
 
   }
+
+  // fn remove_input_link(&mut self, 
+  //                   output_node_id: &String, output_port: i32, 
+  //                   input_node_id: &String,  input_port: i32) -> Result<(),String> {
+  //   match self.find_audio_node(input_node_id) {
+  //     Some(input_vertice_ref) => {
+
+  //       Ok(())
+  //     }
+  //     None => {
+  //       Err(String::from(format!("",)))
+  //     }
+  //   }
+  // }
+
+  // fn remove_output_link(&mut self, 
+  //                   output_node_id: &String, output_port: i32, 
+  //                   input_node_id: &String,  input_port: i32) -> Result<(),String> {
+  //   Ok(())
+  // }
+
+  // pub fn remove_link(&mut self, 
+  //                   output_node_id: &String, output_port: i32, 
+  //                   input_node_id: &String,  input_port: i32) -> Result<(),String> {
+  //   self.remove_input_link(output_node_id, output_port,input_node_id,  input_port);
+  //   self.remove_output_link(output_node_id, output_port,input_node_id,  input_port);
+  //   Ok(())
+  // }
+
 
 
   #[inline(always)] 
@@ -103,142 +176,3 @@ impl Graph {
   }
 
 }
-
-
-// /**
-//  * Vertice
-//  */
-// #[derive(Clone, Debug)]
-// pub struct Vertice<T> where T: Eq + Clone {
-//   id: Box<T>
-// }
-
-// impl<T> Vertice<T> where T: Eq + Clone {
-//   pub fn new(t: T) -> Vertice<T> {
-//     Vertice {
-//       id: Box::new(t)
-//     }
-//   }
-// }
-
-// impl<T> PartialEq for Vertice<T> where T: Eq + Clone {
-//     fn eq(&self, other: &Self) -> bool {
-//         self.id == other.id
-//     }
-// }
-
-// impl<T> Eq for Vertice<T> where T: Eq + Clone {
-// }
-
-// /**
-//  * Edge
-//  */
-// #[derive(Clone, Debug)]
-// pub struct Edge<T> where T: Eq + Clone {
-//   src: Box<T>,
-//   dst: Box<T>
-// } 
-
-// impl<T> Edge<T> where T: Eq + Clone {
-//   pub fn new(src: T,dst: T) -> Edge<T> {
-//     Edge {
-//       src: Box::new(src),
-//       dst: Box::new(dst)
-//     }
-//   }
-// }
-
-// impl<T> PartialEq for Edge<T> where T: Eq + Clone {
-//     fn eq(&self, other: &Self) -> bool {
-//         self.src == other.src && self.dst == other.dst
-//     }
-// }
-
-// impl<T> Eq for Edge<T> where T: Eq + Clone {
-// }
-
-// /**
-//  * Graph
-//  */
-// pub struct Graph<T>  where T: Eq + Clone {
-
-//   vertices: Vec<Vertice<T>>,
-//   edges: Vec<Edge<T>>
-
-// }
-
-// impl<T> Graph<T> where T: Eq + Clone {
-
-//   pub fn new() -> Graph<T> {
-//     Graph { 
-//       vertices: Vec::new(),
-//       edges: Vec::new()
-//     }
-//   }
-
-//   //=== Vertices
-//   fn index_of_vertice(&self,t: &T) -> Option<usize> {
-//     self.vertices.iter().position(|x| *(x.id) == *t )
-//   }
-
-//   pub fn exist_vertice(&self, t: &T) -> bool {
-//     self.index_of_vertice(t).is_some()
-//   }
-
-//   pub fn add_vertice(&mut self, t: &T) -> Result<(),String> {
-//     if self.exist_vertice(t) {
-//       Err(String::from("Vertice already exists."))
-//     } else {
-//       self.vertices.push(Vertice::new(t.clone()));
-//       Ok(())
-//     }
-//   }
-
-//   fn index_of_edge(&self,src: &T, dst: &T) -> Option<usize> {
-//     let target_edge = Edge::new(src.clone(),dst.clone());
-//     self.edges.iter().position(move |edge| (*edge) == target_edge )
-//   }
-
-//   fn get_edges_starting_by_vertice(&self,src: &T) -> Vec<Edge<T>> {
-//     self.edges.iter()
-//       .filter(|edge| *(edge.src) == *src)
-//       .cloned()
-//       .collect::<Vec<Edge<T>>>()
-//   }
-
-//   fn get_edges_ending_by_vertice(&self,dst: &T) -> Vec<Edge<T>> {
-//     self.edges.iter()
-//       .filter(|edge| *(edge.dst) == *dst)
-//       .cloned()
-//       .collect::<Vec<Edge<T>>>()
-//   }
-
-//   //=== Edges
-//   pub fn exist_edge(&self, src: &T, dst: &T) -> bool {
-//     self.index_of_edge(src, dst).is_some()
-//   }
-
-//   pub fn add_edge(&mut self, src: &T, dst: &T) -> Result<(),String> {
-//     if !self.exist_vertice(src) {
-//       Err(String::from("Src vertice does not exists."))
-//     } else if !self.exist_vertice(dst){
-//       Err(String::from("Dst vertice does not exists."))
-//     } else if self.exist_edge(src, dst) {
-//       Err(String::from("Edge already exists."))
-//     } else {
-//       self.edges.push(Edge::new(src.clone(), dst.clone()));
-//       Ok(())
-//     }
-//   }
-
-//   pub fn remove_edge(&mut self, src: &T, dst: &T) -> Result<(),String> {
-//     let idx_opt = self.index_of_edge(src, dst);
-//     match idx_opt {
-//       Some(idx) => { 
-//         self.edges.remove(idx);
-//         Ok(())
-//       }
-//       None => Err(String::from("Edge dos not exists."))
-//     }
-//   }
-// }
