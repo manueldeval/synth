@@ -5,41 +5,38 @@ use crate::synth::factory::AUDIO_NODE_TYPE;
 use crate::synth::audionode::AudioNode;
 use std::rc::Rc;
 use std::cell::RefCell;
+use std::fmt;
 
 //===============================================================
-// Audio Link
+// Link
 //===============================================================
 
-pub struct AudioLink<T> {
+pub struct Link<T> {
   remote_node: Weak<RefCell<Vertice<T>>>,
   remote_port: i32,
   local_port: i32
 }
 
-impl<T> AudioLink<T> {
-  pub fn is_pointing_to_id(&self,id: &String) -> bool {
+impl<T> Link<T> {
+  pub fn new(local_port: i32, weak_remote_node: Weak<RefCell<Vertice<T>>>, remote_port: i32) -> Link<T> {
+    Link {
+      remote_node: weak_remote_node,
+      remote_port: remote_port,
+      local_port: local_port
+    }
+  }
+
+  pub fn target_is(&self,id: &String) -> bool {
     let optional_rc_refcell_vertice: Option<Rc<RefCell<Vertice<T>>>> = self.remote_node.upgrade();
     match optional_rc_refcell_vertice {
-      Some(rc_refcell_vertice) => {
-        rc_refcell_vertice.borrow().id == *id
-      },
-      None => false
+      Some(rc_refcell_vertice)  => rc_refcell_vertice.borrow().id == *id,
+      None                      => false
     }
   }
 
   pub fn matches(&self,local_port: i32, remote_id: &String, remote_port: i32 ) -> bool {
-    local_port == self.local_port && remote_port == self.remote_port && self.is_pointing_to_id(remote_id)  
+    local_port == self.local_port && remote_port == self.remote_port && self.target_is(remote_id)  
   }
-}
-
-#[cfg(test)]
-mod testAudioLink {
-    use super::*;
-
-    #[test]
-    fn test_divide() {
-        assert_eq!(5, 5);
-    }
 }
 
 //===============================================================
@@ -49,20 +46,79 @@ mod testAudioLink {
 pub struct Vertice<T> {
   id: String,
   payload: T,
-  nbr_inputs: i32,
-  nbr_outputs: i32,
-  inputs:   Vec<AudioLink<T>>,
-  outputs:   Vec<AudioLink<T>>
+  inputs:   Vec<Link<T>>,
+  outputs:   Vec<Link<T>>
 }
 
 impl<T> Vertice<T> {
+  pub fn new(id: &String, t: T) -> Vertice<T> {
+    Vertice {
+      id: id.clone(),
+      payload: t,
+      inputs: Vec::new(),
+      outputs: Vec::new()
+    }
+  }
+
   pub fn remove_input_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
     self.inputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
   }
   pub fn remove_output_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
     self.outputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
   }
+  pub fn add_input_link(&mut self,local_port: i32, weak_remote_node: Weak<RefCell<Vertice<T>>>, remote_port: i32){
+    self.inputs.push(Link::new(local_port,weak_remote_node,remote_port));
+  }
+  pub fn add_output_link(&mut self,local_port: i32, weak_remote_node: Weak<RefCell<Vertice<T>>>, remote_port: i32){
+    self.outputs.push(Link::new(local_port,weak_remote_node,remote_port));
+  }
 }
+
+impl<T> fmt::Display for Vertice<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "==== Vertice ID: {} ====", self.id)?;
+        writeln!(f, "---- Outputs: ----")?;
+        for output in self.outputs.iter() {
+          let output_node_name = output.remote_node.upgrade().map_or_else(|| String::from("[!Dropped!]"),|n| n.borrow().id.clone());
+          writeln!(f, "    Output[{}] => Input[{}] of vertice: '{}'", output.local_port,output.remote_port,output_node_name)?;
+        }
+        writeln!(f, "---- Inputs: ----")?;
+        for input in self.inputs.iter() {
+          let input_node_name = input.remote_node.upgrade().map_or_else(|| String::from("[!Dropped!]"),|n| n.borrow().id.clone());
+          writeln!(f, "    Output[{}] => Input[{}] of vertice: '{}'", input.local_port,input.remote_port,input_node_name)?;
+        }
+        Ok(())
+    }
+}
+
+
+#[cfg(test)]
+mod test_vertices {
+    use super::*;
+
+    #[test]
+    fn test_create_vertice() {
+      let v : Vertice<i32> = Vertice::new(&String::from("toto"),42);
+      assert_eq!(v.payload, 42);
+      assert_eq!(v.inputs.len(),0);
+      assert_eq!(v.outputs.len(),0);
+    }
+
+    #[test]
+    fn test_link() {
+      let node1 = &String::from("1");
+      let node2 = &String::from("2");
+
+      let v1 : Rc<RefCell<Vertice<i32>>> = Rc::new(RefCell::new(Vertice::new(node1,1)));
+      let v2 : Rc<RefCell<Vertice<i32>>> = Rc::new(RefCell::new(Vertice::new(node2,2)));
+
+      v1.borrow_mut().add_input_link(0,Rc::downgrade(&v2), 1);
+      v2.borrow_mut().add_output_link(1,Rc::downgrade(&v1), 0);
+      println!("{}",v1.clone().borrow());
+      println!("{}",v2.clone().borrow());
+    }
+}
+
 
 
 //===============================================================
@@ -81,39 +137,28 @@ impl<T> Graph<T> {
     }
   }
 
+  pub fn add_node(&mut self,id: &String,t: T){
+    self.vertices.push(Rc::new(RefCell::new(Vertice::new(id,t)))); 
+  }
 
-  pub fn find_audio_node(&self,id: &String) -> Option<Rc<RefCell<Vertice<T>>>> {
+
+  pub fn find_node(&self,id: &String) -> Option<Rc<RefCell<Vertice<T>>>> {
     self.vertices.iter().find(move |v| (*v).borrow().id == *id ).cloned()
   }
 
   pub fn add_link(&mut self, 
                     output_node_id: &String, output_port: i32, 
                     input_node_id: &String,  input_port: i32) -> Result<(),String>{
-    match self.find_audio_node(&output_node_id) {
-      Some(output_vertice_ref) => {
-        let output_weak = Rc::downgrade(&output_vertice_ref);
-        match self.find_audio_node(&input_node_id) {
-          Some(input_vertice_ref) => {
-            input_vertice_ref.borrow_mut().inputs.push( AudioLink {
-              remote_node: output_weak,
-              remote_port: output_port,
-              local_port: input_port
-            });
 
-            let input_weak = Rc::downgrade(&input_vertice_ref);
-            output_vertice_ref.borrow_mut().outputs.push( AudioLink {
-              remote_node: input_weak,
-              remote_port: input_port,
-              local_port: output_port
-            });
-            Ok(())
-          }
-          None => Err(String::from(format!("Input {} node does not exists.",input_node_id)))
-        }
-      }
-      None => Err(String::from(format!("Output {} node does not exists.",output_node_id)))
-    }
+    let output_vertice_ref = self.find_node(&output_node_id).ok_or(String::from(format!("Output {} node does not exists.",output_node_id)))?;
+    let input_vertice_ref = self.find_node(&input_node_id).ok_or(String::from(format!("Input {} node does not exists.",input_node_id)))?;
 
+    let output_weak = Rc::downgrade(&output_vertice_ref);
+    input_vertice_ref.borrow_mut().add_input_link(input_port,output_weak,output_port);
+
+    let input_weak = Rc::downgrade(&input_vertice_ref);
+    output_vertice_ref.borrow_mut().add_output_link(output_port,input_weak,input_port);
+    Ok(())
   }
 }
 
@@ -123,21 +168,14 @@ impl<T> Graph<T> {
 
 pub type DspGraph = Graph<Box<dyn AudioNode>>;
 pub type DspVertice = Vertice<Box<dyn AudioNode>>;
-pub type DspLink = AudioLink<Box<dyn AudioNode>>;
+pub type DspLink = Link<Box<dyn AudioNode>>;
 
 impl DspGraph {
 
   pub fn add_audio_node(&mut self, id:&String, typ: AUDIO_NODE_TYPE) {
       let audio_node = audio_node_factory(typ);
-      self.vertices.push(Rc::new(RefCell::new(Vertice {
-          id: id.clone(),
-          payload: audio_node,
-          nbr_inputs: 3,
-          nbr_outputs: 2,
-          inputs: Vec::new(),
-          outputs: Vec::new()
-      })));
-    }
+      self.add_node(id,audio_node);
+  }
 
   #[inline(always)] 
   pub fn compute_vertice(&self, vertice: &mut DspVertice ) {

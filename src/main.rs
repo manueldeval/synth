@@ -35,10 +35,7 @@ fn start() {
 }
 
 mod graph;
-use graph::graph::Graph;
 use crate::synth::factory::AUDIO_NODE_TYPE;
-use crate::synth::audionode::AudioNode;
-
 use crate::graph::graph::DspGraph;
 
 fn main() {
@@ -53,6 +50,7 @@ fn main() {
         Ok(()) => println!("Ok"),
         Err(s) => println!("Erreur: {}",s.as_str())
     }
+    g.compute();
     // g.remove_link(&id1, 0, &id2, 0);
     // start();
 }
