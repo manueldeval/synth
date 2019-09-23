@@ -10,15 +10,15 @@ use std::cell::RefCell;
 // Audio Link
 //===============================================================
 
-pub struct AudioLink {
-  remote_node: Weak<RefCell<Vertice>>,
+pub struct AudioLink<T> {
+  remote_node: Weak<RefCell<Vertice<T>>>,
   remote_port: i32,
   local_port: i32
 }
 
-impl AudioLink {
+impl<T> AudioLink<T> {
   pub fn is_pointing_to_id(&self,id: &String) -> bool {
-    let optional_rc_refcell_vertice: Option<Rc<RefCell<Vertice>>> = self.remote_node.upgrade();
+    let optional_rc_refcell_vertice: Option<Rc<RefCell<Vertice<T>>>> = self.remote_node.upgrade();
     match optional_rc_refcell_vertice {
       Some(rc_refcell_vertice) => {
         rc_refcell_vertice.borrow().id == *id
@@ -46,16 +46,16 @@ mod testAudioLink {
 // Vertice
 //===============================================================
 
-pub struct Vertice {
+pub struct Vertice<T> {
   id: String,
-  payload: Box<dyn AudioNode>,
+  payload: T,
   nbr_inputs: i32,
   nbr_outputs: i32,
-  inputs:   Vec<AudioLink>,
-  outputs:   Vec<AudioLink>
+  inputs:   Vec<AudioLink<T>>,
+  outputs:   Vec<AudioLink<T>>
 }
 
-impl Vertice {
+impl<T> Vertice<T> {
   pub fn remove_input_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
     self.inputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
   }
@@ -69,31 +69,20 @@ impl Vertice {
 // Graph
 //===============================================================
 
-pub struct Graph {
-  vertices : Vec<Rc<RefCell<Vertice>>>
+pub struct Graph<T> {
+  vertices : Vec<Rc<RefCell<Vertice<T>>>>
 }
 
-impl Graph {
+impl<T> Graph<T> {
 
-  pub fn new() -> Graph {
+  pub fn new() -> Graph<T> {
     Graph { 
       vertices: Vec::new()
     }
   }
 
-  pub fn add_audio_node(&mut self, id:&String, typ: AUDIO_NODE_TYPE) {
-    let audio_node = audio_node_factory(typ);
-    self.vertices.push(Rc::new(RefCell::new(Vertice {
-        id: id.clone(),
-        payload: audio_node,
-        nbr_inputs: 3,
-        nbr_outputs: 2,
-        inputs: Vec::new(),
-        outputs: Vec::new()
-    })));
-  }
 
-  pub fn find_audio_node(&self,id: &String) -> Option<Rc<RefCell<Vertice>>> {
+  pub fn find_audio_node(&self,id: &String) -> Option<Rc<RefCell<Vertice<T>>>> {
     self.vertices.iter().find(move |v| (*v).borrow().id == *id ).cloned()
   }
 
@@ -126,40 +115,33 @@ impl Graph {
     }
 
   }
+}
 
-  // fn remove_input_link(&mut self, 
-  //                   output_node_id: &String, output_port: i32, 
-  //                   input_node_id: &String,  input_port: i32) -> Result<(),String> {
-  //   match self.find_audio_node(input_node_id) {
-  //     Some(input_vertice_ref) => {
+//===============================================================
+// DspGraph
+//===============================================================
 
-  //       Ok(())
-  //     }
-  //     None => {
-  //       Err(String::from(format!("",)))
-  //     }
-  //   }
-  // }
+pub type DspGraph = Graph<Box<dyn AudioNode>>;
+pub type DspVertice = Vertice<Box<dyn AudioNode>>;
+pub type DspLink = AudioLink<Box<dyn AudioNode>>;
 
-  // fn remove_output_link(&mut self, 
-  //                   output_node_id: &String, output_port: i32, 
-  //                   input_node_id: &String,  input_port: i32) -> Result<(),String> {
-  //   Ok(())
-  // }
+impl DspGraph {
 
-  // pub fn remove_link(&mut self, 
-  //                   output_node_id: &String, output_port: i32, 
-  //                   input_node_id: &String,  input_port: i32) -> Result<(),String> {
-  //   self.remove_input_link(output_node_id, output_port,input_node_id,  input_port);
-  //   self.remove_output_link(output_node_id, output_port,input_node_id,  input_port);
-  //   Ok(())
-  // }
-
-
+  pub fn add_audio_node(&mut self, id:&String, typ: AUDIO_NODE_TYPE) {
+      let audio_node = audio_node_factory(typ);
+      self.vertices.push(Rc::new(RefCell::new(Vertice {
+          id: id.clone(),
+          payload: audio_node,
+          nbr_inputs: 3,
+          nbr_outputs: 2,
+          inputs: Vec::new(),
+          outputs: Vec::new()
+      })));
+    }
 
   #[inline(always)] 
-  pub fn compute_vertice(&self, vertice: &mut Vertice ) {
-    let connected_inputs: Vec<&AudioLink> = vertice.inputs.iter()
+  pub fn compute_vertice(&self, vertice: &mut DspVertice ) {
+    let connected_inputs: Vec<&DspLink> = vertice.inputs.iter()
       .filter(|x| (*x).remote_node.upgrade().is_some())
       .collect();
     for input in connected_inputs {
@@ -174,5 +156,4 @@ impl Graph {
       self.compute_vertice(&mut (*i).borrow_mut());
     }
   }
-
 }

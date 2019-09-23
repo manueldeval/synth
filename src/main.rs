@@ -37,9 +37,12 @@ fn start() {
 mod graph;
 use graph::graph::Graph;
 use crate::synth::factory::AUDIO_NODE_TYPE;
+use crate::synth::audionode::AudioNode;
+
+use crate::graph::graph::DspGraph;
 
 fn main() {
-    let mut g: Graph = Graph::new();
+    let mut g: DspGraph = DspGraph::new();
 
     let id1 = String::from("Sin1");
     let id2 = String::from("Sin2");
