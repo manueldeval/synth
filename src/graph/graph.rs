@@ -70,6 +70,29 @@ impl<T> Vertice<T> {
       Err(String::from(format!("Input link on Node {} [{}] to node {} [{}] does not exists.",self.id,local_port,remote_id,remote_port)))
     }
   }
+
+  pub fn remove_input_links_from(&mut self, remote_id: &String) -> Result<(),String> {
+    let before = self.inputs.len();
+    self.inputs.retain(|audio_link| !audio_link.target_is(remote_id));
+    let after = self.inputs.len();
+    if before != after {
+      Ok(())
+    } else {
+      Err(String::from(format!("Input link on Node {} to node {} does not exists.",self.id,remote_id)))
+    }
+  }
+
+  pub fn remove_output_links_from(&mut self, remote_id: &String) -> Result<(),String> {
+    let before = self.outputs.len();
+    self.outputs.retain(|audio_link| !audio_link.target_is(remote_id));
+    let after = self.outputs.len();
+    if before != after {
+      Ok(())
+    } else {
+      Err(String::from(format!("Output link on Node {} to node {} does not exists.",self.id,remote_id)))
+    }
+  }
+
   pub fn remove_output_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32) -> Result<(),String> {
     let before = self.outputs.len();
     self.outputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
@@ -100,7 +123,7 @@ impl<T> fmt::Display for Vertice<T> {
         writeln!(f, "---- Inputs: ----")?;
         for input in self.inputs.iter() {
           let input_node_name = input.remote_node.upgrade().map_or_else(|| String::from("[!Dropped!]"),|n| n.borrow().id.clone());
-          writeln!(f, "    Input[{}] => Output[{}] of vertice: '{}'", input.local_port,input.remote_port,input_node_name)?;
+          writeln!(f, "    Input[{}] <= Output[{}] of vertice: '{}'", input.local_port,input.remote_port,input_node_name)?;
         }
         Ok(())
     }
@@ -191,9 +214,30 @@ impl<T> Graph<T> {
   }
 
   pub fn remove_node(&mut self,node_id: &String) -> Result<(),String> {
-    // 1) Remove all links (in/out)
+    // 1) Find all Vertices pointing on self.
+    let vertice_to_remove_ref = self.find_node(&node_id).ok_or(String::from(format!("Node {} node does not exists.",node_id)))?;
+    let nodes_with_output_to_clean: Vec<String> = vertice_to_remove_ref.borrow().inputs.iter()
+              .flat_map(|link| link.remote_node.upgrade())
+              .map(|remote_node| remote_node.borrow().id.clone())
+              .filter(|id| id != node_id)
+              .collect();
+    for node in nodes_with_output_to_clean.iter() {
+        let target_node = self.find_node(&node).ok_or(String::from(format!("Node {} node does not exists.",node)))?;
+        let _ = target_node.borrow_mut().remove_output_links_from(node_id);
+    }
 
-    // 2) Remove node
+    let nodes_with_input_to_clean: Vec<String> = vertice_to_remove_ref.borrow().outputs.iter()
+              .flat_map(|link| link.remote_node.upgrade())
+              .map(|remote_node| remote_node.borrow().id.clone())
+              .filter(|id| id != node_id)
+              .collect();
+    for node in nodes_with_input_to_clean.iter() {
+        let target_node = self.find_node(&node).ok_or(String::from(format!("Node {} node does not exists.",node)))?;
+        let _ = target_node.borrow_mut().remove_input_links_from(node_id);
+    }
+
+    // 3) Remove node
+    self.vertices.retain(|v| !(v.borrow().id == *node_id)) ;
     Ok(())
   }
 
@@ -230,7 +274,16 @@ impl DspGraph {
       .filter(|x| (*x).remote_node.upgrade().is_some())
       .collect();
     for input in connected_inputs {
-      let output_value = input.remote_node.upgrade().unwrap().borrow().payload.get_output_value(input.remote_port);
+      // Unwrap is safety there, because we have filter previously the none case.
+      let unwrapped = input.remote_node.upgrade().unwrap();
+
+      // Uggly trick!
+      // If the borrowing fails... it means that's a feedback on the current node!
+      let output_value = match unwrapped.try_borrow() {
+        Ok(borrowed)  => borrowed.payload.get_output_value(input.remote_port),
+        Err(_)        => vertice.payload.get_output_value(input.remote_port)
+      };
+
       vertice.payload.set_input_value(input.local_port,output_value);
     }
     vertice.payload.compute();
