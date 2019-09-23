@@ -46,12 +46,23 @@ fn main() {
 
     g.add_audio_node(&id1, AUDIO_NODE_TYPE::SQUARE_LFO);
     g.add_audio_node(&id2, AUDIO_NODE_TYPE::SQUARE);
+
     match g.add_link(&id1, 0, &id2, 0) {
-        Ok(()) => println!("Ok"),
+        Ok(()) => println!("Create: Ok"),
         Err(s) => println!("Erreur: {}",s.as_str())
     }
-    g.compute();
-    // g.remove_link(&id1, 0, &id2, 0);
+    println!("{}",g);
+    match g.remove_link(&id1, 0, &id2, 0) {
+        Ok(_) => println!("Delete: Ok!!!"),
+        Err(s) => println!("Err: {}",s)
+    };
+    println!("{}",g);
+    match g.remove_link(&id1, 1, &id2, 0) {
+        Ok(_) => println!("Delete: Ok!!!"),
+        Err(s) => println!("Err: {}",s)
+    };
+
+    // g.compute();
     // start();
 }
 

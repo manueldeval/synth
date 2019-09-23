@@ -60,12 +60,27 @@ impl<T> Vertice<T> {
     }
   }
 
-  pub fn remove_input_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
+  pub fn remove_input_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32) -> Result<(),String> {
+    let before = self.inputs.len();
     self.inputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
+    let after = self.inputs.len();
+    if before != after {
+      Ok(())
+    } else {
+      Err(String::from(format!("Input link on Node {} [{}] to node {} [{}] does not exists.",self.id,local_port,remote_id,remote_port)))
+    }
   }
-  pub fn remove_output_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32){
+  pub fn remove_output_link(&mut self, local_port: i32, remote_id: &String, remote_port: i32) -> Result<(),String> {
+    let before = self.outputs.len();
     self.outputs.retain(|audio_link| !audio_link.matches(local_port,remote_id,remote_port));
+    let after = self.outputs.len();
+    if before != after {
+      Ok(())
+    } else {
+      Err(String::from(format!("Output link on Node {} [{}] to node {} [{}] does not exists.",self.id,local_port,remote_id,remote_port)))
+    }
   }
+
   pub fn add_input_link(&mut self,local_port: i32, weak_remote_node: Weak<RefCell<Vertice<T>>>, remote_port: i32){
     self.inputs.push(Link::new(local_port,weak_remote_node,remote_port));
   }
@@ -85,7 +100,7 @@ impl<T> fmt::Display for Vertice<T> {
         writeln!(f, "---- Inputs: ----")?;
         for input in self.inputs.iter() {
           let input_node_name = input.remote_node.upgrade().map_or_else(|| String::from("[!Dropped!]"),|n| n.borrow().id.clone());
-          writeln!(f, "    Output[{}] => Input[{}] of vertice: '{}'", input.local_port,input.remote_port,input_node_name)?;
+          writeln!(f, "    Input[{}] => Output[{}] of vertice: '{}'", input.local_port,input.remote_port,input_node_name)?;
         }
         Ok(())
     }
@@ -148,7 +163,7 @@ impl<T> Graph<T> {
 
   pub fn add_link(&mut self, 
                     output_node_id: &String, output_port: i32, 
-                    input_node_id: &String,  input_port: i32) -> Result<(),String>{
+                    input_node_id: &String,  input_port: i32) -> Result<(),String> {
 
     let output_vertice_ref = self.find_node(&output_node_id).ok_or(String::from(format!("Output {} node does not exists.",output_node_id)))?;
     let input_vertice_ref = self.find_node(&input_node_id).ok_or(String::from(format!("Input {} node does not exists.",input_node_id)))?;
@@ -160,6 +175,38 @@ impl<T> Graph<T> {
     output_vertice_ref.borrow_mut().add_output_link(output_port,input_weak,input_port);
     Ok(())
   }
+
+  pub fn remove_link(&mut self, 
+                    output_node_id: &String, output_port: i32, 
+                    input_node_id: &String,  input_port: i32) -> Result<(),String> {
+
+
+    let output_vertice_ref = self.find_node(&output_node_id).ok_or(String::from(format!("Output {} node does not exists.",output_node_id)))?;
+    let input_vertice_ref = self.find_node(&input_node_id).ok_or(String::from(format!("Input {} node does not exists.",input_node_id)))?;
+
+    input_vertice_ref.borrow_mut().remove_input_link(input_port, output_node_id, output_port)?;
+    output_vertice_ref.borrow_mut().remove_output_link(output_port, input_node_id, input_port)?;
+
+    Ok(())
+  }
+
+  pub fn remove_node(&mut self,node_id: &String) -> Result<(),String> {
+    // 1) Remove all links (in/out)
+
+    // 2) Remove node
+    Ok(())
+  }
+
+}
+
+impl<T> fmt::Display for Graph<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f,"########### GRAPH ###########")?;
+        for vertice in self.vertices.iter() {
+          vertice.borrow().fmt(f)?;
+        }
+        Ok(())
+    }
 }
 
 //===============================================================
