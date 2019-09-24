@@ -49,9 +49,24 @@ mod graph;
 
 
 fn main() {
-    match start() {
-        Err(e) => eprintln!("{}",e),
-        _ => ()
+    let command1 = EditableSynthCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN };
+    let command2 = EditableSynthCommand::Link { 
+        src_node: String::from("a"), src_port: 0,
+        dst_node: String::from("master"), dst_port: 0 
     };
+
+
+    let mut serialized = serde_json::to_string(&command2).unwrap();
+    println!("{}",serialized);
+    serialized = serde_json::to_string(&command1).unwrap();
+    println!("{}",serialized);
+
+    let deserialized: EditableSynthCommand = serde_json::from_str(&serialized).unwrap();
+    println!("{}",deserialized);
+
+    // match start() {
+    //     Err(e) => eprintln!("{}",e),
+    //     _ => ()
+    // };
 }
 

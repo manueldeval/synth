@@ -6,8 +6,9 @@ use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
 use crate::osc::osc::OSCReceiverFactory;
 
 use std::fmt;
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize,Clone)]
 pub enum AudioNodeRegistry {
   SIN,
   SIN_LFO,

@@ -115,6 +115,9 @@ impl Synth for EditableSynth {
   }
 }
 
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize,Clone)]
 pub enum EditableSynthCommand {
   Create {id: String, node_type: AudioNodeRegistry },
   Link  {src_node: String, src_port: i32, dst_node: String, dst_port: i32},
