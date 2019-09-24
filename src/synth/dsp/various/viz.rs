@@ -46,8 +46,6 @@ impl ScopeNode {
   }
 
 
-    // some work here
-
   pub fn launch_scope() -> Sender<ScopeNodeData> {
     let  (tx, rx): (Sender<ScopeNodeData>, Receiver<ScopeNodeData>) = channel();
     thread::spawn(move || {
@@ -73,6 +71,19 @@ impl ScopeNode {
           
           window.draw_2d(&event, |context, graphics, _device| {
             clear([1.0; 4], graphics);
+            rectangle([0.0, 0.0, 1.0, 1.0], 
+                        [0.0, 240.0, 640.0 , 1.0 ],
+                        context.transform,
+                        graphics);   
+
+            rectangle([0.0, 0.0, 1.0, 1.0], 
+                        [0.0, 40.0, 640.0 , 1.0 ],
+                        context.transform,
+                        graphics);  
+            rectangle([0.0, 0.0, 1.0, 1.0], 
+                        [0.0, 440.0, 640.0 , 1.0 ],
+                        context.transform,
+                        graphics);           
             for i in 0..640 {
               let value = (400.0*(buffer[i+zero_cross]+1.0)/2.0) as f64;
               rectangle([1.0, 0.0, 0.0, 1.0], 

@@ -26,7 +26,7 @@ pub struct SimpleSynth {
     lfo:  Box<dyn AudioNode>,
     lfo2:  Box<dyn AudioNode>,
     sh: Box<dyn AudioNode>,
-    // scope: Box<dyn AudioNode>,
+    scope: Box<dyn AudioNode>,
     keyboard: Box<dyn AudioNode>,
     filter: Box<dyn AudioNode>,
 }
@@ -42,7 +42,7 @@ impl SimpleSynth {
         //let mut oscillator = Box::new(SquareNode::new(OscillatorMode::AUDIO,0.0,0.6,true));//,SawNode::TRI));
         // let mut oscillator = Box::new(SinNode::new(OscillatorMode::AUDIO,0.0,0.1,true));
         let mut keyboard = Box::new(KeyboardNode::new(&osc_receiver_factory));
-        // let mut scope = Box::new(ScopeNode::new());
+        let mut scope = Box::new(ScopeNode::new());
         let mut filter = Box::new(MoogFilterNode::new());
 
         oscillator.configure(sample_rate);
@@ -55,7 +55,7 @@ impl SimpleSynth {
                 lfo2: lfo2,
                 keyboard: keyboard,
                 knob: knob,
-                // scope: scope,
+                scope: scope,
                 filter: filter,
                 sh: sh
         }
@@ -85,9 +85,9 @@ impl SimpleSynth {
         self.filter.compute();
 
         // Scope
-        // self.scope.set_input_value(ScopeNode::INPUT_SIGNAL,self.filter.get_output_value(MoogFilterNode::OUPUT_LP));
+        self.scope.set_input_value(ScopeNode::INPUT_SIGNAL,self.filter.get_output_value(MoogFilterNode::OUPUT_LP));
         // self.scope.set_input_value(ScopeNode::INPUT_SIGNAL,self.sh.get_output_value(SampleHoldNode::OUTPUT_SIGNAL));
-        // self.scope.compute();
+        self.scope.compute();
         // Scope
 
         self.filter.get_output_value(MoogFilterNode::OUPUT_LP)

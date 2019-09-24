@@ -1,8 +1,5 @@
-use std::rc::Weak;
-use crate::synth::dsp::registry::AudioNodeRegistry;
-
-use crate::synth::dsp::audionode::AudioNode;
 use std::rc::Rc;
+use std::rc::Weak;
 use std::cell::RefCell;
 use std::fmt;
 
@@ -11,9 +8,9 @@ use std::fmt;
 //===============================================================
 
 pub struct Link<T> {
-  remote_node: Weak<RefCell<Vertice<T>>>,
-  remote_port: i32,
-  local_port: i32
+  pub remote_node: Weak<RefCell<Vertice<T>>>,
+  pub remote_port: i32,
+  pub local_port: i32
 }
 
 impl<T> Link<T> {
@@ -43,10 +40,10 @@ impl<T> Link<T> {
 //===============================================================
 
 pub struct Vertice<T> {
-  id: String,
-  payload: T,
-  inputs:   Vec<Link<T>>,
-  outputs:   Vec<Link<T>>
+  pub id: String,
+  pub payload: T,
+  pub inputs:   Vec<Link<T>>,
+  pub outputs:   Vec<Link<T>>
 }
 
 impl<T> Vertice<T> {
@@ -163,7 +160,7 @@ mod test_vertices {
 //===============================================================
 
 pub struct Graph<T> {
-  vertices : Vec<Rc<RefCell<Vertice<T>>>>
+  pub vertices : Vec<Rc<RefCell<Vertice<T>>>>
 }
 
 impl<T> Graph<T> {
@@ -250,47 +247,4 @@ impl<T> fmt::Display for Graph<T> {
         }
         Ok(())
     }
-}
-
-//===============================================================
-// DspGraph
-//===============================================================
-
-pub type DspGraph = Graph<Box<dyn AudioNode>>;
-pub type DspVertice = Vertice<Box<dyn AudioNode>>;
-pub type DspLink = Link<Box<dyn AudioNode>>;
-
-impl DspGraph {
-
-  pub fn add_audio_node(&mut self, id:&String, registry: AudioNodeRegistry) {
-      let audio_node = registry.create_node();
-      self.add_node(id,audio_node);
-  }
-
-  #[inline(always)] 
-  pub fn compute_vertice(&self, vertice: &mut DspVertice ) {
-    let connected_inputs: Vec<&DspLink> = vertice.inputs.iter()
-      .filter(|x| (*x).remote_node.upgrade().is_some())
-      .collect();
-    for input in connected_inputs {
-      // Unwrap is safety there, because we have filter previously the none case.
-      let unwrapped = input.remote_node.upgrade().unwrap();
-
-      // Uggly trick!
-      // If the borrowing fails... it means that's a feedback on the current node!
-      let output_value = match unwrapped.try_borrow() {
-        Ok(borrowed)  => borrowed.payload.get_output_value(input.remote_port),
-        Err(_)        => vertice.payload.get_output_value(input.remote_port)
-      };
-
-      vertice.payload.set_input_value(input.local_port,output_value);
-    }
-    vertice.payload.compute();
-  }
-
-  pub fn compute(&self) {
-    for i in self.vertices.iter() {
-      self.compute_vertice(&mut (*i).borrow_mut());
-    }
-  }
 }
