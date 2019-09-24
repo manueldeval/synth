@@ -1,5 +1,5 @@
-use crate::synth::audionode::AudioNode;
-use crate::synth::converters::voltage_to_boolean;
+use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::utils::converters::voltage_to_boolean;
 
 pub struct SampleHoldNode {
   input_trigger: bool,

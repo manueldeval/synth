@@ -1,7 +1,7 @@
 use std::rc::Weak;
-use crate::synth::factory::AUDIO_NODE_TYPE;
+use crate::synth::dsp::registry::AudioNodeRegistry;
 
-use crate::synth::audionode::AudioNode;
+use crate::synth::dsp::audionode::AudioNode;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::fmt;
@@ -262,8 +262,8 @@ pub type DspLink = Link<Box<dyn AudioNode>>;
 
 impl DspGraph {
 
-  pub fn add_audio_node(&mut self, id:&String, typ: AUDIO_NODE_TYPE) {
-      let audio_node = typ.create_node();
+  pub fn add_audio_node(&mut self, id:&String, registry: AudioNodeRegistry) {
+      let audio_node = registry.create_node();
       self.add_node(id,audio_node);
   }
 

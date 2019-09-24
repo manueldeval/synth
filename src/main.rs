@@ -13,7 +13,7 @@ extern crate piston_window;
 use std::sync::{Arc, Mutex};
 
 use osc::osc::OSC;
-use synth::synth::Synth;
+use synth::engine::simple::SimpleSynth;
 use player::soundsystem::SoundSystem;
 
 
@@ -24,7 +24,7 @@ fn start() {
 
     println!("Starting sound system.");
     let mut sound_system = SoundSystem::build();
-    let synth = Arc::new(Mutex::new(Synth::new(sound_system.sample_rate(), osc.receiver_factory())));
+    let synth = Arc::new(Mutex::new(SimpleSynth::new(sound_system.sample_rate(), osc.receiver_factory())));
     
     println!("Starting sound system.");
     let sound_thread = sound_system.start(synth);
@@ -35,7 +35,7 @@ fn start() {
 }
 
 mod graph;
-use crate::synth::factory::AUDIO_NODE_TYPE;
+use crate::synth::dsp::registry::AudioNodeRegistry;
 use crate::graph::graph::DspGraph;
 
 fn main() {
@@ -44,8 +44,8 @@ fn main() {
     let id1 = String::from("Sin1");
     let id2 = String::from("Sin2");
 
-    g.add_audio_node(&id1, AUDIO_NODE_TYPE::SQUARE_LFO);
-    g.add_audio_node(&id2, AUDIO_NODE_TYPE::SQUARE);
+    g.add_audio_node(&id1, AudioNodeRegistry::SQUARE_LFO);
+    g.add_audio_node(&id2, AudioNodeRegistry::SQUARE);
 
     g.add_link(&id1, 1, &id1, 2);
     match g.add_link(&id1, 0, &id2, 0) {

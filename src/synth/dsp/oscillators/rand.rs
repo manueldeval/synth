@@ -1,6 +1,6 @@
-use crate::synth::audionode::AudioNode;
-use crate::synth::converters::voltage_to_zero_to_one;
-use crate::synth::converters::voltage_to_boolean;
+use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::utils::converters::voltage_to_zero_to_one;
+use crate::synth::utils::converters::voltage_to_boolean;
 
 use rand::prelude::*;
 

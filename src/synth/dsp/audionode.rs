@@ -39,32 +39,6 @@ impl AudioNode for ConstantNode {
 
 /*
 =========================================
-Stdout
-=========================================
-*/
-
-pub struct StdoutNode {
-  value: f32,
-  prefix: String
-}
-
-impl StdoutNode {
-  pub const INPUT_VALUE: i32 = 0;
-
-  pub fn new(prefix: String) -> StdoutNode {
-    StdoutNode { prefix: prefix , value: 0.0 }
-  }
-}
-
-impl AudioNode for StdoutNode {
-  
-  fn set_input_value(&mut self, _input: i32, value: f32) { self.value = value }
-  fn compute(&mut self) { println!("{} {}", self.prefix, self.value) }
-  fn get_output_value(&self, _ouput: i32) -> f32 { 0.0 }
-}
-
-/*
-=========================================
 Null
 =========================================
 */

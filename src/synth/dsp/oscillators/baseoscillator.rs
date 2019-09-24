@@ -1,4 +1,9 @@
-use super::converters::{voltage_to_lfo_frequency,voltage_to_frequency, voltage_to_zero_to_one,voltage_to_boolean,boolean_to_voltage};
+use crate::synth::utils::converters::voltage_to_lfo_frequency;
+use crate::synth::utils::converters::voltage_to_frequency;
+use crate::synth::utils::converters::voltage_to_zero_to_one;
+use crate::synth::utils::converters::voltage_to_boolean;
+use crate::synth::utils::converters::boolean_to_voltage;
+use crate::synth::dsp::audionode::AudioNode;
 
 pub enum OscillatorMode {
   LFO,
@@ -17,7 +22,6 @@ pub struct CommonOscillator {
   pub oscillator_mode: OscillatorMode,
   pub is_on: bool
 }
-use super::audionode::AudioNode;
 
 impl CommonOscillator {
   pub const INPUT_FREQ: i32= 0;

@@ -1,7 +1,7 @@
-use crate::synth::audionode::AudioNode;
-use crate::synth::converters::voltage_to_frequency;
-use crate::synth::converters::voltage_to_zero_to_one;
-use crate::synth::converters::hard_clip;
+use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::utils::converters::voltage_to_frequency;
+use crate::synth::utils::converters::voltage_to_zero_to_one;
+use crate::synth::utils::converters::hard_clip;
 
 // https://github.com/OpenBCI/OpenBCI_GUI/blob/master/OpenBCI_GUI/libraries/minim/src/ddf/minim/ugens/MoogFilter.java
 

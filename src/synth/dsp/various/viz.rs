@@ -1,4 +1,4 @@
-use crate::synth::audionode::AudioNode;
+use crate::synth::dsp::audionode::AudioNode;
 
 use std::thread;
 use std::sync::mpsc::channel;

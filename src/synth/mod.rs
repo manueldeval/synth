@@ -1,12 +1,5 @@
-pub mod audionode;
-pub mod oscillators;
-pub mod converters;
-pub mod osc;
-pub mod baseoscillator;
-pub mod synth;
-pub mod viz;
-pub mod filter;
-pub mod rand;
-pub mod samplehold;
-pub mod factory;
+pub mod dsp;
+pub mod utils;
+
+pub mod engine;
 

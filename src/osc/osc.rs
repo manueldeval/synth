@@ -13,7 +13,7 @@ pub struct OSCReceiverFactory {
 
 impl OSCReceiverFactory {
   pub fn create_receiver(&self) ->  BusReader<OscPacket> {
-    self.osc_bus.clone().lock().unwrap().add_rx()
+    self.osc_bus.lock().unwrap().add_rx()
   }
 }
 

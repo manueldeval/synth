@@ -3,11 +3,12 @@
 
 // -1 => 0hz 
 //  1 => 20hz
+#[inline(always)] 
 pub fn voltage_to_lfo_frequency(voltage: f32) -> f32 {
   //20.0 * (voltage + 1.0)/2.0
   10.0 * (voltage + 1.0)
 }
-
+#[inline(always)] 
 pub fn lfo_frequency_to_voltage(freq: f32) -> f32 {
   //20.0 * (voltage + 1.0)/2.0
   (freq/10.0) - 1.0 
@@ -15,18 +16,22 @@ pub fn lfo_frequency_to_voltage(freq: f32) -> f32 {
 
 
 
+#[inline(always)] 
 pub fn midi_to_voltage(midi: f32) -> f32 {
   (midi - 1_f32) / 64_f32 - 1_f32
 }
 
+#[inline(always)] 
 pub fn voltage_to_frequency(voltage: f32) -> f32 {
   440_f32 * 2_f32.powf((64_f32 * voltage - 4_f32) / 12_f32)
 }
 
+#[inline(always)] 
 pub fn voltage_to_boolean(voltage: f32) -> bool {
   voltage > 0.0 
 }
 
+#[inline(always)] 
 pub fn boolean_to_voltage(value: bool) -> f32 {
   match value {
     true => 1_f32,
@@ -34,10 +39,12 @@ pub fn boolean_to_voltage(value: bool) -> f32 {
   }
 }
 
+#[inline(always)] 
 pub fn voltage_to_zero_to_one(voltage: f32) -> f32 {
   (voltage+1.0)/2.0
 }
 
+#[inline(always)] 
 pub fn hard_clip(v: f32, min: f32, max: f32) -> f32 {
   match v {
     v if v < min => min,
