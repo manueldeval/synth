@@ -51,7 +51,7 @@ impl CommonOscillator {
 }
 
 
-pub trait BaseOscillator {  
+pub trait BaseOscillator : Send {  
   fn get_common_oscillator(&self) -> &CommonOscillator;
   fn get_common_oscillator_mut(&mut self) -> &mut CommonOscillator;
 

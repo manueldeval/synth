@@ -12,7 +12,7 @@ pub struct SinNode {
   common_oscillator: CommonOscillator
 }
 
-impl SinNode{ 
+impl SinNode { 
   pub fn new(osc_mode: OscillatorMode,osc_frequency: f32, amp: f32,is_on: bool) -> SinNode {
     SinNode {
       common_oscillator: CommonOscillator::new(osc_mode,osc_frequency,amp,is_on)
