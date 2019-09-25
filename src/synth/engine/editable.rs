@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use crate::osc::osc::OSCReceiverFactory;
 
 use std::fmt;
-
+use crate::synth::engine::systemcommand::SystemCommandHandler;
 //===============================================================
 // DspGraph
 //===============================================================
@@ -96,22 +96,32 @@ impl EditableSynth {
     self.graph.compute();
     self.get_master_output()
   }
+  
+}
 
-  pub fn add_audio_node(&mut self, id: &String, node_type: AudioNodeRegistry) -> Result<(),String> {
+impl Synth for EditableSynth {
+  fn compute(&mut self) -> f32 {
+    EditableSynth::compute(self)
+  }
+}
+
+impl SystemCommandHandler for EditableSynth {
+
+  fn add_audio_node(&mut self, id: &String, node_type: AudioNodeRegistry) -> Result<(),String> {
     let mut audio_node = node_type.create_node(self.sample_rate, &self.event_receiver_factory);
     audio_node.configure(self.sample_rate);
     self.graph.add_audio_node(id, audio_node)
   }
 
-  pub fn add_link(&mut self, src_node: &String, src_port: i32, dst_node: &String, dst_port: i32) -> Result<(),String> {
+  fn add_link(&mut self, src_node: &String, src_port: i32, dst_node: &String, dst_port: i32) -> Result<(),String> {
     self.graph.add_link(src_node, src_port, dst_node, dst_port)
   }
 
-  pub fn remove_link(&mut self, src_node: &String, src_port: i32, dst_node: &String, dst_port: i32) -> Result<(),String> {
+  fn remove_link(&mut self, src_node: &String, src_port: i32, dst_node: &String, dst_port: i32) -> Result<(),String> {
     self.graph.remove_link(src_node, src_port, dst_node, dst_port)
   }
 
-  pub fn remove_node(&mut self, id: &String) -> Result<(),String> {
+  fn remove_node(&mut self, id: &String) -> Result<(),String> {
     if id != EditableSynth::MASTER_ID {
       self.graph.remove_node(id)
     } else {
@@ -119,7 +129,7 @@ impl EditableSynth {
     }
   }
 
-  pub fn rename_node(&mut self, old_id: &String, new_id: &String) -> Result<(),String> {
+  fn rename_node(&mut self, old_id: &String, new_id: &String) -> Result<(),String> {
     if let Some(_) = self.graph.find_node(new_id)  {
       Err(String::from(format!("The node {} already exists.",new_id)))
     } else if let Some(node) = self.graph.find_node(old_id) {
@@ -130,52 +140,7 @@ impl EditableSynth {
     }
   }
 
-  pub fn receive_command(&mut self, command: &EditableSynthCommand) -> Result<(),String> {
-    match command {
-      EditableSynthCommand::Create { id, node_type } => self.add_audio_node(id, node_type.clone()),
-      EditableSynthCommand::Link {src_node, src_port, dst_node, dst_port} =>  self.add_link(src_node, *src_port, dst_node, *dst_port),
-      EditableSynthCommand::Unlink {src_node, src_port, dst_node, dst_port} => self.remove_link(src_node, *src_port, dst_node, *dst_port),
-      EditableSynthCommand::Remove { id } => self.remove_node(id),
-      EditableSynthCommand::Reset => self.init(),
-      EditableSynthCommand::Debug => {  eprintln!("{}",self.graph); Ok(()) },
-      EditableSynthCommand::Rename { old_id, new_id } => self.rename_node(old_id,new_id)
-    }
-  }
-  
-}
-
-impl Synth for EditableSynth {
-  fn compute(&mut self) -> f32 {
-    EditableSynth::compute(self)
+  fn reset(&mut self) -> Result<(),String> {
+    self.init()
   }
 }
-
-use serde::{Serialize, Deserialize};
-
-#[derive(Serialize, Deserialize,Clone)]
-pub enum EditableSynthCommand {
-  Create {id: String, node_type: AudioNodeRegistry },
-  Link  {src_node: String, src_port: i32, dst_node: String, dst_port: i32},
-  Unlink {src_node: String, src_port: i32, dst_node: String, dst_port: i32},
-  Remove { id: String },
-  Rename { old_id: String, new_id: String },
-  Reset,
-  Debug
-}
-
-impl fmt::Display for EditableSynthCommand {
-    // This trait requires `fmt` with this exact signature.
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-      match self {
-        EditableSynthCommand::Create { id, node_type }                        => write!(f,"Create (id: {}, node_type: {} )",id,node_type),
-        EditableSynthCommand::Link {src_node, src_port, dst_node, dst_port}   => write!(f,"Link   (src_node: {}, src_port: {}, dst_node: {}, dst_port: {})",src_node,src_port,dst_node,dst_port),
-        EditableSynthCommand::Unlink {src_node, src_port, dst_node, dst_port} => write!(f,"Unlink (src_node: {}, src_port: {}, dst_node: {}, dst_port: {})",src_node,src_port,dst_node,dst_port),
-        EditableSynthCommand::Remove { id }                                   => write!(f,"Remove (id: {})",id),
-        EditableSynthCommand::Reset                                           => write!(f,"Reset"),
-        EditableSynthCommand::Debug                                           => write!(f,"Debug"),
-        EditableSynthCommand::Rename {old_id , new_id }                       => write!(f,"Rename (old_id: {}, new_id:{})",old_id,new_id)
-      }
-    }
-}
-
-

@@ -5,6 +5,7 @@
 mod synth;
 mod player;
 mod osc;
+mod graph;
 
 extern crate cpal;
 extern crate failure;
@@ -12,7 +13,8 @@ extern crate piston_window;
 
 use osc::osc::OSC;
 use synth::engine::editable::EditableSynth;
-use synth::engine::editable::EditableSynthCommand;
+use synth::engine::systemcommand::SystemCommand;
+use synth::engine::systemcommand::SystemCommandHandler;
 use synth::dsp::registry::AudioNodeRegistry;
 use player::soundsystem::SoundSystem;
 use crossbeam::crossbeam_channel::bounded;
@@ -27,9 +29,9 @@ fn start() -> Result<(),String> {
     //let mut synth = SimpleSynth::new(sound_system.sample_rate(), osc.receiver_factory());
     let mut synth = EditableSynth::new(sound_system.sample_rate(), osc.receiver_factory());
 
-    synth.receive_command(&EditableSynthCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN })?;
+    synth.receive_command(&SystemCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN })?;
 
-    synth.receive_command(&EditableSynthCommand::Link { 
+    synth.receive_command(&SystemCommand::Link { 
         src_node: String::from("a"), src_port: 0,
         dst_node: String::from("master"), dst_port: 0 
     })?;
@@ -45,12 +47,11 @@ fn start() -> Result<(),String> {
     println!("Stopped.");
 }
 
-mod graph;
 
 
 fn main() {
-    let command1 = EditableSynthCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN };
-    let command2 = EditableSynthCommand::Link { 
+    let command1 = SystemCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN };
+    let command2 = SystemCommand::Link { 
         src_node: String::from("a"), src_port: 0,
         dst_node: String::from("master"), dst_port: 0 
     };
@@ -61,7 +62,7 @@ fn main() {
     serialized = serde_json::to_string(&command1).unwrap();
     println!("{}",serialized);
 
-    let deserialized: EditableSynthCommand = serde_json::from_str(&serialized).unwrap();
+    let deserialized: SystemCommand = serde_json::from_str(&serialized).unwrap();
     println!("{}",deserialized);
 
     // match start() {
