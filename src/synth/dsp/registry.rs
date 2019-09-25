@@ -30,7 +30,6 @@ impl AudioNodeRegistry {
 }
 
 impl fmt::Display for AudioNodeRegistry {
-    // This trait requires `fmt` with this exact signature.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
       match self {
         AudioNodeRegistry::SIN        => write!(f,"SIN"),

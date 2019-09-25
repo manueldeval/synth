@@ -171,8 +171,14 @@ impl<T> Graph<T> {
     }
   }
 
-  pub fn add_node(&mut self,id: &String,t: T){
-    self.vertices.push(Rc::new(RefCell::new(Vertice::new(id,t)))); 
+  pub fn add_node(&mut self,id: &String,t: T) -> Result<(),String> {
+    match self.find_node(id) {
+      None => {
+        self.vertices.push(Rc::new(RefCell::new(Vertice::new(id,t))));
+        Ok(())
+      },
+      Some(_) => Err(String::from(format!("Cannot add the node with id {}, id already exists.",id)))
+    } 
   }
 
 
@@ -207,6 +213,10 @@ impl<T> Graph<T> {
     output_vertice_ref.borrow_mut().remove_output_link(output_port, input_node_id, input_port)?;
 
     Ok(())
+  }
+
+  pub fn reset(&mut self) {
+    self.vertices.truncate(0);
   }
 
   pub fn remove_node(&mut self,node_id: &String) -> Result<(),String> {
