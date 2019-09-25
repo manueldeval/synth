@@ -18,6 +18,8 @@ use synth::engine::systemcommand::SystemCommandHandler;
 use synth::dsp::registry::AudioNodeRegistry;
 use player::soundsystem::SoundSystem;
 use crossbeam::crossbeam_channel::bounded;
+use crate::synth::utils::note::*;
+use crate::synth::dsp::units::*;
 
 fn start() -> Result<(),String> {
     println!("Starting osc receiver.");
@@ -29,7 +31,7 @@ fn start() -> Result<(),String> {
     //let mut synth = SimpleSynth::new(sound_system.sample_rate(), osc.receiver_factory());
     let mut synth = EditableSynth::new(sound_system.sample_rate(), osc.receiver_factory());
 
-    synth.receive_command(&SystemCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN })?;
+    synth.receive_command(&SystemCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN { freq: None, amp: None } })?;
 
     synth.receive_command(&SystemCommand::Link { 
         src_node: String::from("a"), src_port: 0,
@@ -47,10 +49,8 @@ fn start() -> Result<(),String> {
     println!("Stopped.");
 }
 
-
-
 fn main() {
-    let command1 = SystemCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN };
+    let command1 = SystemCommand::Create { id: String::from("a"), node_type: AudioNodeRegistry::SIN { freq: Some(OscFreq::Note(Note::A4)), amp: Some(Amp::Lin(0.5)) } };
     let command2 = SystemCommand::Link { 
         src_node: String::from("a"), src_port: 0,
         dst_node: String::from("master"), dst_port: 0 
