@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use crate::osc::osc::OSCReceiverFactory;
 
 use std::fmt;
-use crate::synth::engine::systemcommand::SystemCommandHandler;
+use crate::synth::commands::systemcommand::SystemCommandHandler;
 //===============================================================
 // DspGraph
 //===============================================================
@@ -75,7 +75,7 @@ impl EditableSynth {
   fn init(&mut self) -> Result<(),String> {
     self.graph.reset();
     let mut master_audio_node =  AudioNodeRegistry::INDENTITY.create_node(self.sample_rate,&self.event_receiver_factory);
-    master_audio_node.configure(self.sample_rate);
+    master_audio_node.set_sample_rate(self.sample_rate);
     self.graph.add_audio_node(&String::from(EditableSynth::MASTER_ID), master_audio_node)?;
     let master_node = Rc::downgrade(&self.graph.find_node(&String::from(EditableSynth::MASTER_ID)).unwrap());
     self.master_node = master_node;
@@ -109,7 +109,7 @@ impl SystemCommandHandler for EditableSynth {
 
   fn add_audio_node(&mut self, id: &String, node_type: AudioNodeRegistry) -> Result<(),String> {
     let mut audio_node = node_type.create_node(self.sample_rate, &self.event_receiver_factory);
-    audio_node.configure(self.sample_rate);
+    audio_node.set_sample_rate(self.sample_rate);
     self.graph.add_audio_node(id, audio_node)
   }
 

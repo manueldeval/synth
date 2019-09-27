@@ -1,16 +1,21 @@
 
-use crate::synth::dsp::audionode::AudioNode;
-use crate::osc::osc::OSCReceiverFactory;
 use rosc::{OscPacket,OscType};
 use bus::BusReader;
+
+use crate::synth::dsp::audionode::AudioNode;
+use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::utils::converters::boolean_to_voltage;
 use crate::synth::utils::converters::voltage_to_boolean;
 use crate::synth::utils::converters::midi_to_voltage;
 use crate::synth::utils::converters:: MidiNote;
+use crate::synth::dsp::audionode::ConfigSpec;
+use crate::synth::dsp::audionode::ConfigType;
+use crate::synth::dsp::audionode::ConfigVal;
 
 pub struct KeyboardNode {
   freq: f32,
   on: f32,
+  osc_channel: String,
   receiver: BusReader<OscPacket>
 }
 
@@ -22,20 +27,34 @@ impl KeyboardNode {
     KeyboardNode { 
       receiver: osc_receiver_factory.create_receiver(), 
       freq:     midi_to_voltage(MidiNote::A4),
-      on:       boolean_to_voltage(false) 
+      on:       boolean_to_voltage(false),
+      osc_channel: String::from("/keyboard")
     }
   }
 }
 
 impl AudioNode for KeyboardNode {
   
+  fn get_config_spec() -> Vec<ConfigSpec> { 
+    vec!(
+      ConfigSpec::new(String::from("osc_channel"),ConfigType::StringType)
+    )
+  }
+
+  fn set_config(&mut self, key: &String, val: &ConfigVal) -> Result<(),String> {
+    KeyboardNode::check_key_value_type(key,val)?;
+    match key.as_ref() {
+      "osc_channel" => val.as_string().map(|s| self.osc_channel = s),
+      _ =>  Err(String::from(format!("Config key {} not implemented.",key)))
+    }
+  }
+
   fn set_input_value(&mut self, _input: i32, _value: f32) { }
   fn compute(&mut self) {
     let osc_packet = self.receiver.try_recv();
     match osc_packet {
       Ok(OscPacket::Message(msg)) => {
-        // println!("OSC address: {}", msg.addr);
-        if msg.addr.eq("/keyboard") {
+        if msg.addr == self.osc_channel {
           match msg.args {
             Some(args) => {
               if args.len() == 2 {

@@ -26,11 +26,10 @@ impl ToVolt for OscFreq {
     }
   }
 }
-pub type OptOscFreq = Option<OscFreq>;
 
 /*
 ========================================
-Audion OSC Frequency 
+Audion OSC Amp 
 =========================================
 */
 #[derive(Serialize, Deserialize,Clone)]
@@ -42,9 +41,8 @@ pub enum Amp {
 impl ToVolt for Amp {
   fn volts(&self) -> f32 {
     match &self {
-      Amp::Lin(v) => *v,
+      Amp::Lin(v) => zero_to_one_to_voltage(*v),
       Amp::Val(v) => *v
     }
   }
 }
-pub type OptAmp = Option<Amp>;

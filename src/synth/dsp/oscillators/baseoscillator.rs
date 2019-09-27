@@ -95,7 +95,7 @@ pub trait BaseOscillator : Send {
 
 impl<T> AudioNode for T where T: BaseOscillator {  
 
-  fn configure(&mut self,frequency: i32){
+  fn set_sample_rate(&mut self,frequency: i32){
     self.get_common_oscillator_mut().sample_rate = frequency as f32;
   }
   

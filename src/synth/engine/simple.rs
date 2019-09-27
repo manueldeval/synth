@@ -45,9 +45,9 @@ impl SimpleSynth {
         let mut scope = Box::new(ScopeNode::new());
         let mut filter = Box::new(MoogFilterNode::new());
 
-        oscillator.configure(sample_rate);
-        lfo.configure(sample_rate);
-        filter.configure(sample_rate);
+        oscillator.set_sample_rate(sample_rate);
+        lfo.set_sample_rate(sample_rate);
+        filter.set_sample_rate(sample_rate);
 
         SimpleSynth { 
                 oscillator: oscillator,

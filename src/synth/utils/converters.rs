@@ -14,7 +14,14 @@ pub fn lfo_frequency_to_voltage(freq: f32) -> f32 {
   (freq/10.0) - 1.0 
 }
 
-
+// https://www.desmos.com/calculator/b3wd3awmkq
+// y=(b*x-x)/(2*b*x-b-1) with -1<b<1 
+#[inline(always)]
+pub fn non_linearized(val: f32, amount: f32) -> f32 {
+  let normalized_amount = hard_clip(amount, -0.99, 0.99);
+  let x = val.abs();
+  val.signum()*(normalized_amount*x-x)/(2.0*normalized_amount*x-normalized_amount-1.0)
+}
 
 #[inline(always)] 
 pub fn midi_to_voltage(midi: f32) -> f32 {
@@ -42,6 +49,11 @@ pub fn boolean_to_voltage(value: bool) -> f32 {
 #[inline(always)] 
 pub fn voltage_to_zero_to_one(voltage: f32) -> f32 {
   (voltage+1.0)/2.0
+}
+
+#[inline(always)] 
+pub fn zero_to_one_to_voltage(val: f32) -> f32 {
+  (val * 2.0) -1.0
 }
 
 #[inline(always)] 

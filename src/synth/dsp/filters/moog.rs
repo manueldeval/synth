@@ -51,7 +51,7 @@ impl AudioNode for MoogFilterNode {
     };
   }
 
-  fn configure(&mut self,frequency: i32) {
+  fn set_sample_rate(&mut self,frequency: i32) {
     self.sample_rate_hz = frequency as f32;
   }
   
