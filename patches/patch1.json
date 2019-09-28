@@ -1,8 +1,8 @@
 {
   "commands":[
     "Reset", 
-    {"Create":{"id":"keyboard",   "node_type":"KEYBOARD"}},
-    {"Create":{"id":"a",          "node_type":"SIN"}},
+    {"Create":{"id":"keyboard",   "node_type":"Keyboard"}},
+    {"Create":{"id":"a",          "node_type":"Sin"}},
 
     {"Link":{"src_node":"keyboard","src_port":0,"dst_node":"a","dst_port":0}},
     {"Link":{"src_node":"keyboard","src_port":1,"dst_node":"a","dst_port":2}},

@@ -5,10 +5,10 @@ commands:
   - Reset
   
   # Creation des noeuds de traitement
-  - Create: { id: keyboard, node_type: KEYBOARD }
+  - Create: { id: keyboard, node_type: Keyboard }
   - ChangeConfig: { id: keyboard,   key: osc_channel,   val: { StringVal: '/keyboard' }}
   
-  - Create: { id: a,        node_type: SIN }
+  - Create: { id: a,        node_type: Sin }
   
   # Lien des noeuds
   - Link: { src_node: keyboard,     src_port: 0,    dst_node: a,        dst_port: 0 }
