@@ -25,7 +25,7 @@ pub enum AudioNodeRegistry {
 
 
 impl AudioNodeRegistry {
-  pub fn create_node(&self, sample_rate: i32, osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> {
+  pub fn create_node(&self, _sample_rate: i32, osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> {
     SinNode::get_config_spec();
     match self {
       AudioNodeRegistry::Sin       => Box::new(SinNode::new(OscillatorMode::AUDIO, 0.5, 0.5, true)),
