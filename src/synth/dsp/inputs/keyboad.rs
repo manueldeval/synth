@@ -8,9 +8,8 @@ use crate::synth::utils::converters::boolean_to_voltage;
 use crate::synth::utils::converters::voltage_to_boolean;
 use crate::synth::utils::converters::midi_to_voltage;
 use crate::synth::utils::converters:: MidiNote;
-use crate::synth::dsp::audionode::ConfigSpec;
-use crate::synth::dsp::audionode::ConfigType;
-use crate::synth::dsp::audionode::ConfigVal;
+use crate::synth::commands::config::*;
+
 
 pub struct KeyboardNode {
   freq: f32,

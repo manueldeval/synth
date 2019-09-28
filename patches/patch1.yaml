@@ -1,0 +1,16 @@
+
+
+commands:
+  # Suppression du graphe actuel
+  - Reset
+  
+  # Creation des noeuds de traitement
+  - Create: { id: keyboard, node_type: KEYBOARD }
+  - ChangeConfig: { id: keyboard,   key: osc_channel,   val: { StringVal: '/keyboard' }}
+  
+  - Create: { id: a,        node_type: SIN }
+  
+  # Lien des noeuds
+  - Link: { src_node: keyboard,     src_port: 0,    dst_node: a,        dst_port: 0 }
+  - Link: { src_node: keyboard,     src_port: 1,    dst_node: a,        dst_port: 2 }
+  - Link: { src_node: a,            src_port: 0,    dst_node: master,   dst_port: 0 }

@@ -5,10 +5,11 @@ use crate::graph::graph::Link;
 use crate::synth::dsp::audionode::AudioNode;
 use crate::synth::dsp::registry::AudioNodeRegistry;
 use crate::synth::dsp::various::identity::IdentityNode;
+use crate::osc::osc::OSCReceiverFactory;
+use crate::synth::commands::config::*;
 use std::rc::Rc;
 use std::rc::Weak;
 use std::cell::RefCell;
-use crate::osc::osc::OSCReceiverFactory;
 
 use std::fmt;
 use crate::synth::commands::systemcommand::SystemCommandHandler;
@@ -143,4 +144,13 @@ impl SystemCommandHandler for EditableSynth {
   fn reset(&mut self) -> Result<(),String> {
     self.init()
   }
+
+  fn change_config(&mut self,id: &String, key: &String, val: &ConfigVal) -> Result<(),String> {
+     if let Some(node) = self.graph.find_node(id) {
+      node.borrow_mut().payload.set_config(key,val)
+    } else {
+      Err(String::from(format!("The node {} does not exists.",id)))
+    }
+  }
+
 }
