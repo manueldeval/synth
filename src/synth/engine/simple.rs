@@ -7,8 +7,6 @@ use crate::synth::dsp::inputs::keyboad::KeyboardNode;
 use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
 use crate::synth::dsp::oscillators::baseoscillator::CommonOscillator;
 use crate::synth::dsp::oscillators::simple::SinNode;
-use crate::synth::dsp::oscillators::simple::SquareNode;
-use crate::synth::dsp::oscillators::simple::SawNode;
 use crate::synth::dsp::oscillators::rand::RandNode;
 
 use crate::synth::dsp::various::samplehold::SampleHoldNode;
@@ -34,15 +32,15 @@ pub struct SimpleSynth {
 impl SimpleSynth {
 
     pub fn new(sample_rate: i32, osc_receiver_factory: OSCReceiverFactory) -> SimpleSynth {
-        let mut knob = Box::new(KnobNode::new(&osc_receiver_factory,0.0,String::from("/fader")));
+        let knob = Box::new(KnobNode::new(&osc_receiver_factory,0.0,String::from("/fader")));
         let mut lfo  = Box::new(SinNode::new(OscillatorMode::LFO,lfo_frequency_to_voltage(1.0),0.90,true));
-        let mut lfo2 = Box::new(SinNode::new(OscillatorMode::LFO,lfo_frequency_to_voltage(5.0),0.90,true));
-        let mut sh =   Box::new(SampleHoldNode::new());
+        let lfo2 = Box::new(SinNode::new(OscillatorMode::LFO,lfo_frequency_to_voltage(5.0),0.90,true));
+        let sh =   Box::new(SampleHoldNode::new());
         let mut oscillator = Box::new(RandNode::new(0.8));
         //let mut oscillator = Box::new(SquareNode::new(OscillatorMode::AUDIO,0.0,0.6,true));//,SawNode::TRI));
         // let mut oscillator = Box::new(SinNode::new(OscillatorMode::AUDIO,0.0,0.1,true));
-        let mut keyboard = Box::new(KeyboardNode::new(&osc_receiver_factory));
-        let mut scope = Box::new(ScopeNode::new());
+        let keyboard = Box::new(KeyboardNode::new(&osc_receiver_factory));
+        let scope = Box::new(ScopeNode::new());
         let mut filter = Box::new(MoogFilterNode::new());
 
         oscillator.set_sample_rate(sample_rate);

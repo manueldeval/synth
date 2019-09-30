@@ -1,6 +1,6 @@
 #[allow(dead_code)]
-#[allow(unused_mut)]
-#[allow(unused_imports)]
+// #[allow(unused_mut)]
+// #[allow(unused_imports)]
 
 mod synth;
 mod player;

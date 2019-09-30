@@ -60,7 +60,7 @@ impl AudioNode for MoogFilterNode {
 
     // temporary buffers
 		let mut t1 : f32; 
-		let mut t2 : f32;
+		let t2 : f32;
 
     let norm_freq = voltage_to_frequency(self.cutoff_frequency_volt) / (self.sample_rate_hz * 0.5);
 		let rez = hard_clip( voltage_to_zero_to_one(self.resonance_volt), 0.0, 1.0 );

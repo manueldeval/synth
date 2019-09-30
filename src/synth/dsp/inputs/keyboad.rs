@@ -5,7 +5,6 @@ use bus::BusReader;
 use crate::synth::dsp::audionode::AudioNode;
 use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::utils::converters::boolean_to_voltage;
-use crate::synth::utils::converters::voltage_to_boolean;
 use crate::synth::utils::converters::midi_to_voltage;
 use crate::synth::utils::converters:: MidiNote;
 use crate::synth::commands::config::*;

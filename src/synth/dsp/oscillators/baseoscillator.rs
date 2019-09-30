@@ -131,7 +131,7 @@ impl<T> AudioNode for T where T: BaseOscillator {
   }
 
   fn get_output_value(&self, output: i32) -> f32 { 
-    let mut common = self.get_common_oscillator();
+    let common = self.get_common_oscillator();
     match output {
       CommonOscillator::OUTPUT_OSC => common.value,
       CommonOscillator::OUTPUT_TRIGGER_SYNC_PHASE => boolean_to_voltage(common.output_sync_phase),

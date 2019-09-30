@@ -3,10 +3,6 @@ use crate::synth::dsp::audionode::AudioNode;
 use crate::osc::osc::OSCReceiverFactory;
 use rosc::{OscPacket,OscType};
 use bus::BusReader;
-use crate::synth::utils::converters::boolean_to_voltage;
-use crate::synth::utils::converters::voltage_to_boolean;
-use crate::synth::utils::converters::midi_to_voltage;
-use crate::synth::utils::converters:: MidiNote;
 
 pub struct KnobNode {
   value: f32,
