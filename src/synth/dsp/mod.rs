@@ -7,3 +7,4 @@ pub mod inputs;
 pub mod audionode;
 pub mod registry;
 pub mod units;
+pub mod node_factory;

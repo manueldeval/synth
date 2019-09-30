@@ -1,5 +1,5 @@
 [package]
-name = "hello_world"
+name = "rustic_synth"
 version = "0.1.0"
 authors = ["Manuel Deval <manuel.deval@gmail.com>"]
 edition = "2018"
@@ -11,13 +11,18 @@ rosc = "~0.1"
 bus = "2.2.2"
 rand = "0.7.2"
 
-#https://github.com/PistonDevelopers/piston
-#https://github.com/PistonDevelopers/piston-examples/blob/master/src/shapes.rs
+# Oscillo
 piston2d-graphics = "0.35.0"
 piston_window = "0.98.0"
 
+# Fast channel
 crossbeam = "0.7.2"
+
+# Serialize (json/yaml)
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.8"
 
+# Struct iter
+strum = "0.16.0"
+strum_macros = "0.16.0"

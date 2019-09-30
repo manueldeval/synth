@@ -7,12 +7,16 @@ use crate::synth::dsp::inputs::keyboad::KeyboardNode;
 use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::dsp::units::*;
 use crate::synth::utils::note::*;
+use crate::synth::commands::config::*;
+use crate::synth::dsp::node_factory::*;
+
+use strum_macros::{Display, EnumIter};
+use strum::IntoEnumIterator;
 
 use std::fmt;
 use serde::{Serialize, Deserialize};
 
-
-#[derive(Serialize, Deserialize,Clone)]
+#[derive(Serialize, Deserialize,Clone, Display, EnumIter)]
 pub enum AudioNodeRegistry {
   Sin,
   SinLfo,
@@ -22,31 +26,27 @@ pub enum AudioNodeRegistry {
   Identity
 }
 
-
-
 impl AudioNodeRegistry {
-  pub fn create_node(&self, _sample_rate: i32, osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> {
-    SinNode::get_config_spec();
+  pub fn get_node_factory(&self) -> Box<dyn AudioNodeFactory> {
     match self {
-      AudioNodeRegistry::Sin       => Box::new(SinNode::new(OscillatorMode::AUDIO, 0.5, 0.5, true)),
-      AudioNodeRegistry::SinLfo    => Box::new(SinNode::new(OscillatorMode::LFO, 0.5, 0.5, true)),
-      AudioNodeRegistry::Square    => Box::new(SquareNode::new(OscillatorMode::AUDIO, 0.0, 0.5, true)),
-      AudioNodeRegistry::SquareLfo => Box::new(SquareNode::new(OscillatorMode::LFO, 0.0, 0.5, true)),
-      AudioNodeRegistry::Keyboard   => Box::new(KeyboardNode::new(osc_receiver_factory)),
-      AudioNodeRegistry::Identity  => Box::new(IdentityNode::new()),
+      AudioNodeRegistry::Sin       => Box::new(SinFactory),
+      AudioNodeRegistry::SinLfo    => Box::new(SinLfoFactory),
+      AudioNodeRegistry::Square    => Box::new(SquareFactory),
+      AudioNodeRegistry::SquareLfo => Box::new(SquareLfoFactory),
+      AudioNodeRegistry::Keyboard  => Box::new(KeyboardFactory),
+      AudioNodeRegistry::Identity  => Box::new(IdentityFactory)
     }
   }
+
+  pub fn node_types() -> Vec<AudioNodeRegistry> {
+    AudioNodeRegistry::iter().collect()
+  }
+
+  pub fn create_node(&self,sample_rate: i32, osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> {
+    let mut node = self.get_node_factory().create(osc_receiver_factory);
+    node.set_sample_rate(sample_rate);
+    node
+  }
+
 }
 
-impl fmt::Display for AudioNodeRegistry {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-      match self {
-        AudioNodeRegistry::Sin       => write!(f,"SIN"),
-        AudioNodeRegistry::SinLfo    => write!(f,"SIN_LFO"),
-        AudioNodeRegistry::Square    => write!(f,"SQUARE"),
-        AudioNodeRegistry::SquareLfo => write!(f,"SQUARE_LFO"),
-        AudioNodeRegistry::Keyboard   => write!(f,"INDENTITY"),
-        AudioNodeRegistry::Identity  => write!(f,"KEYBOARD"),
-      }
-    }
-}
