@@ -57,6 +57,7 @@ impl AudioNodeFactory for SquareLfoFactory {
 pub struct KeyboardFactory;
 impl AudioNodeFactory for KeyboardFactory {
   fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(KeyboardNode::new(osc_receiver_factory)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { KeyboardNode::get_config_spec() }
 }
 
 //===============================================================

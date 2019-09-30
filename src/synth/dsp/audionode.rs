@@ -1,5 +1,11 @@
 use crate::synth::commands::config::*;
 
+pub struct InputSpec {
+  num: i32,
+  name: String,
+}
+
+
 pub trait AudioNode {
   
   fn set_config(&mut self, _key: &String, _val: &ConfigVal) -> Result<(),String> { Ok(()) }

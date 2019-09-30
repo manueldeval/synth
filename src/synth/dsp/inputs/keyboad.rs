@@ -43,7 +43,7 @@ impl AudioNode for KeyboardNode {
     KeyboardNode::check_key_value_type(key,val)?;
     match key.as_ref() {
       "osc_channel" => val.as_string().map(|s| self.osc_channel = s),
-      _ =>  Err(String::from(format!("Config key {} not implemented.",key)))
+      _ =>  Err(String::from(format!("Config key {} not implemented for KeyboardNode.",key)))
     }
   }
 

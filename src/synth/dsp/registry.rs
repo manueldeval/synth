@@ -1,14 +1,16 @@
 use crate::synth::dsp::audionode::AudioNode;
 use crate::osc::osc::OSCReceiverFactory;
-// use crate::synth::commands::config::*;
+use crate::synth::commands::config::*;
 use crate::synth::dsp::node_factory::*;
 
 use strum_macros::{Display, EnumIter};
 use strum::IntoEnumIterator;
 
+use std::collections::HashMap;
+
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize,Clone, Display, EnumIter)]
+#[derive(Serialize, Deserialize,Clone, Display, EnumIter,Hash, Eq, PartialEq)]
 pub enum AudioNodeRegistry {
   Sin,
   SinLfo,
@@ -30,6 +32,13 @@ impl AudioNodeRegistry {
     }
   }
 
+  pub fn get_nodes_config_spec() -> HashMap<AudioNodeRegistry,Vec<ConfigSpec>> {
+    AudioNodeRegistry::node_types()
+      .iter()
+      .map(|x| (x.clone(),(*x).get_node_factory().config_spec()))
+      .collect()
+  }
+
   pub fn node_types() -> Vec<AudioNodeRegistry> {
     AudioNodeRegistry::iter().collect()
   }
@@ -42,3 +51,13 @@ impl AudioNodeRegistry {
 
 }
 
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_serialize_get_nodes_config_spec() {
+    let map = AudioNodeRegistry::get_nodes_config_spec();
+    println!("{}",serde_json::to_string(&map).unwrap());
+  }
+}
