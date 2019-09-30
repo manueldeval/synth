@@ -1,4 +1,4 @@
-use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::dsp::audionode::*;
 use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::commands::config::*;
 use crate::synth::dsp::node_factory::*;
@@ -39,6 +39,13 @@ impl AudioNodeRegistry {
       .collect()
   }
 
+  pub fn get_nodes_io_spec() -> HashMap<AudioNodeRegistry,IOSpec> {
+    AudioNodeRegistry::node_types()
+      .iter()
+      .map(|x| (x.clone(),(*x).get_node_factory().io_spec()))
+      .collect()
+  }
+
   pub fn node_types() -> Vec<AudioNodeRegistry> {
     AudioNodeRegistry::iter().collect()
   }
@@ -58,6 +65,12 @@ mod tests {
   #[test]
   fn test_serialize_get_nodes_config_spec() {
     let map = AudioNodeRegistry::get_nodes_config_spec();
+    println!("{}",serde_json::to_string(&map).unwrap());
+  }
+
+    #[test]
+  fn test_serialize_get_nodes_io_spec() {
+    let map = AudioNodeRegistry::get_nodes_io_spec();
     println!("{}",serde_json::to_string(&map).unwrap());
   }
 }

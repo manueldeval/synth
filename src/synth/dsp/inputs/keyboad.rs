@@ -2,7 +2,7 @@
 use rosc::{OscPacket,OscType};
 use bus::BusReader;
 
-use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::dsp::audionode::*;
 use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::utils::converters::boolean_to_voltage;
 use crate::synth::utils::converters::midi_to_voltage;
@@ -32,7 +32,15 @@ impl KeyboardNode {
 }
 
 impl AudioNode for KeyboardNode {
-  
+  fn get_input_spec() -> Vec<ConnectorSpec> where Self: Sized { Vec::new() }
+
+  fn get_output_spec() -> Vec<ConnectorSpec> where Self: Sized { 
+    vec!(
+      ConnectorSpec::new(String::from("FREQUENCY"), String::from("")),
+      ConnectorSpec::new(String::from("NOTE_ON"), String::from("")),
+    ) 
+  }
+
   fn get_config_spec() -> Vec<ConfigSpec> { 
     vec!(
       ConfigSpec::new(String::from("osc_channel"),ConfigType::StringType)
@@ -48,6 +56,7 @@ impl AudioNode for KeyboardNode {
   }
 
   fn set_input_value(&mut self, _input: i32, _value: f32) { }
+
   fn compute(&mut self) {
     let osc_packet = self.receiver.try_recv();
     match osc_packet {

@@ -1,4 +1,4 @@
-use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::dsp::audionode::*;
 use crate::synth::commands::config::ConfigSpec;
 
 use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
@@ -11,6 +11,7 @@ use crate::osc::osc::OSCReceiverFactory;
 pub trait AudioNodeFactory {
   fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode>;
   fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { IOSpec::empty() }
 }
 
 //===============================================================
@@ -21,6 +22,8 @@ pub trait AudioNodeFactory {
 pub struct SinFactory;
 impl AudioNodeFactory for SinFactory {
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SinNode::new(OscillatorMode::AUDIO, 0.5, 0.5, true)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { SinNode::get_config_spec() }
+  fn io_spec(&self) -> IOSpec { SinNode::get_io_spec() }
 }
 
 //===============================================================
@@ -30,6 +33,8 @@ impl AudioNodeFactory for SinFactory {
 pub struct SinLfoFactory;
 impl AudioNodeFactory for SinLfoFactory {
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SinNode::new(OscillatorMode::LFO, 0.5, 0.5, true)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { SinNode::get_config_spec() }
+  fn io_spec(&self) -> IOSpec { SinNode::get_io_spec() }
 }
 
 //===============================================================
@@ -39,6 +44,8 @@ impl AudioNodeFactory for SinLfoFactory {
 pub struct SquareFactory;
 impl AudioNodeFactory for SquareFactory {
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SquareNode::new(OscillatorMode::AUDIO, 0.0, 0.5, true)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { SquareNode::get_config_spec() }
+  fn io_spec(&self) -> IOSpec { SquareNode::get_io_spec() }
 }
 
 //===============================================================
@@ -48,6 +55,8 @@ impl AudioNodeFactory for SquareFactory {
 pub struct SquareLfoFactory;
 impl AudioNodeFactory for SquareLfoFactory {
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SquareNode::new(OscillatorMode::LFO, 0.0, 0.5, true)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { SquareNode::get_config_spec() }
+  fn io_spec(&self) -> IOSpec { SquareNode::get_io_spec() }
 }
 
 //===============================================================
@@ -58,6 +67,7 @@ pub struct KeyboardFactory;
 impl AudioNodeFactory for KeyboardFactory {
   fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(KeyboardNode::new(osc_receiver_factory)) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { KeyboardNode::get_config_spec() }
+  fn io_spec(&self) -> IOSpec { KeyboardNode::get_io_spec() }
 }
 
 //===============================================================
@@ -67,4 +77,6 @@ impl AudioNodeFactory for KeyboardFactory {
 pub struct IdentityFactory;
 impl AudioNodeFactory for IdentityFactory {
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(IdentityNode::new()) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { IdentityNode::get_config_spec() }
+  fn io_spec(&self) -> IOSpec { IdentityNode::get_io_spec() }
 }

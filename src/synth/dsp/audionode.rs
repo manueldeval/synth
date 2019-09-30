@@ -1,16 +1,46 @@
 use crate::synth::commands::config::*;
+use serde::{Serialize, Deserialize};
 
-pub struct InputSpec {
-  num: i32,
+#[derive(Serialize, Deserialize,Clone)]
+pub struct ConnectorSpec {
   name: String,
+  description: String
 }
 
+impl ConnectorSpec {
+  pub fn new(name: String, description: String) -> ConnectorSpec {
+    ConnectorSpec { name:name, description:description }
+  }
+}
+
+#[derive(Serialize, Deserialize,Clone)]
+pub struct IOSpec {
+  inputs: Vec<ConnectorSpec>,
+  outputs: Vec<ConnectorSpec>
+} 
+
+impl IOSpec {
+  pub fn new(inputs: Vec<ConnectorSpec>,outputs: Vec<ConnectorSpec>) -> IOSpec {
+    IOSpec{inputs:inputs,outputs:outputs}
+  }
+  pub fn empty() -> IOSpec {
+    IOSpec{inputs: Vec::new(),outputs: Vec::new()}
+  }
+} 
 
 pub trait AudioNode {
   
   fn set_config(&mut self, _key: &String, _val: &ConfigVal) -> Result<(),String> { Ok(()) }
   
   fn get_config_spec() -> Vec<ConfigSpec> where Self: Sized { Vec::new() }
+
+  fn get_input_spec() -> Vec<ConnectorSpec> where Self: Sized { Vec::new() }
+
+  fn get_output_spec() -> Vec<ConnectorSpec> where Self: Sized { Vec::new() }
+
+  fn get_io_spec() -> IOSpec where Self: Sized {
+    IOSpec { inputs: Self::get_input_spec(), outputs: Self::get_output_spec()}
+  }
 
   fn check_key_value_type(key: &String, val: &ConfigVal) -> Result<(),String> where Self: Sized {
     Self::get_config_spec()
