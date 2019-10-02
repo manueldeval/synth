@@ -8,7 +8,10 @@ mod osc;
 mod graph;
 
 extern crate cpal;
+
+#[cfg(feature = "oscilloscope")]
 extern crate failure;
+#[cfg(feature = "oscilloscope")]
 extern crate piston_window;
 
 use osc::osc::OSC;

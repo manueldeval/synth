@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Manuel Deval <manuel.deval@gmail.com>"]
 edition = "2018"
 
+[features]
+oscilloscope = ["piston2d-graphics", "piston_window"]
+
 [dependencies]
 cpal = { version = "*" }
 failure = "0.1.5"
@@ -12,8 +15,8 @@ bus = "2.2.2"
 rand = "0.7.2"
 
 # Oscillo
-piston2d-graphics = "0.35.0"
-piston_window = "0.98.0"
+piston2d-graphics = { version =  "0.35.0", optional = true }
+piston_window = { version = "0.98.0" , optional = true }
 
 # Fast channel
 crossbeam = "0.7.2"
@@ -26,3 +29,4 @@ serde_yaml = "0.8"
 # Struct iter
 strum = "0.16.0"
 strum_macros = "0.16.0"
+
