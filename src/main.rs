@@ -6,6 +6,7 @@ mod synth;
 mod player;
 mod osc;
 mod graph;
+mod web;
 
 extern crate cpal;
 
@@ -20,7 +21,8 @@ use synth::commands::systemcommand::SystemCommandHandler;
 use player::soundsystem::SoundSystem;
 use crossbeam::crossbeam_channel::bounded;
 
-use crate::synth::commands::patch::Patch;
+use synth::commands::patch::Patch;
+use web::webserver::*;
 
 fn start(patch:  &Patch) -> Result<(),String> {
     println!("Starting osc receiver.");
@@ -50,8 +52,10 @@ fn start(patch:  &Patch) -> Result<(),String> {
 }
 
 fn main() -> Result<(),String> {
-    let patch = Patch::from_file(&String::from("/home/deman/projets/perso/rustic/synth/patches/patch1.yaml"))?;
-    start(&patch)
+    start_web_server().join();
+    Ok(())
+    // let patch = Patch::from_file(&String::from("/home/deman/projets/perso/rustic/synth/patches/patch1.yaml"))?;
+    // start(&patch)
 }
 
 

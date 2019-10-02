@@ -20,6 +20,12 @@ pub enum AudioNodeRegistry {
   Identity
 }
 
+#[derive(Serialize, Deserialize,Clone)]
+pub struct NodeInfos  {
+  config_spec: Vec<ConfigSpec>,
+  io_spec: IOSpec
+}
+
 impl AudioNodeRegistry {
   pub fn get_node_factory(&self) -> Box<dyn AudioNodeFactory> {
     match self {
@@ -54,6 +60,20 @@ impl AudioNodeRegistry {
     let mut node = self.get_node_factory().create(osc_receiver_factory);
     node.set_sample_rate(sample_rate);
     node
+  }
+
+  pub fn node_infos() ->  HashMap<AudioNodeRegistry,NodeInfos> {
+    let io_spec = AudioNodeRegistry::get_nodes_io_spec();
+    let config_spec = AudioNodeRegistry::get_nodes_config_spec();
+    AudioNodeRegistry::node_types()
+      .iter()
+      .map(|x| (x.clone(),
+                NodeInfos{
+                  config_spec: config_spec.get(x).get_or_insert(&Vec::new()).clone(),
+                  io_spec: io_spec.get(x).get_or_insert(&IOSpec::empty()).clone()
+                })
+      )
+      .collect()
   }
 
 }

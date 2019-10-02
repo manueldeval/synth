@@ -30,3 +30,7 @@ serde_yaml = "0.8"
 strum = "0.16.0"
 strum_macros = "0.16.0"
 
+# Web
+actix-web = "1.0"
+actix-files = "0.1"
+
