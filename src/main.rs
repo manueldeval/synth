@@ -52,7 +52,7 @@ fn start(patch:  &Patch) -> Result<(),String> {
 }
 
 fn main() -> Result<(),String> {
-    start_web_server().join();
+    let _ = start_web_server().join();
     Ok(())
     // let patch = Patch::from_file(&String::from("/home/deman/projets/perso/rustic/synth/patches/patch1.yaml"))?;
     // start(&patch)

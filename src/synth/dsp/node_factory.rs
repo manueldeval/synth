@@ -11,7 +11,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize,Clone)]
 pub struct NodeInfos  {
-  // classifier: String,
+  pub classifier: String,
   pub config_spec: Vec<ConfigSpec>,
   pub io_spec: IOSpec
 }
@@ -20,6 +20,10 @@ pub trait AudioNodeFactory {
   fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode>;
   fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
   fn io_spec(&self) -> IOSpec { IOSpec::empty() }
+  fn classifier(&self) -> String;
+  fn node_infos(&self) -> NodeInfos {
+    NodeInfos { classifier: self.classifier(), config_spec: self.config_spec(), io_spec: self.io_spec() }
+  }
 }
 
 //===============================================================
@@ -48,6 +52,7 @@ fn baseoscillator_output_spec() -> Vec<ConnectorSpec> {
 
 pub struct SinFactory;
 impl AudioNodeFactory for SinFactory {
+  fn classifier(&self) -> String { String::from("oscillator/sin") }
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SinNode::new(OscillatorMode::AUDIO, 0.5, 0.5, true)) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
   fn io_spec(&self) -> IOSpec { 
@@ -61,11 +66,13 @@ impl AudioNodeFactory for SinFactory {
 
 pub struct SinLfoFactory;
 impl AudioNodeFactory for SinLfoFactory {
+  fn classifier(&self) -> String { String::from("lfo/sin") }
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SinNode::new(OscillatorMode::LFO, 0.5, 0.5, true)) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
   fn io_spec(&self) -> IOSpec { 
     IOSpec { inputs: baseoscillator_input_spec() ,outputs: baseoscillator_output_spec() }
-  }}
+  }
+}
 
 //===============================================================
 // Square Node
@@ -73,6 +80,7 @@ impl AudioNodeFactory for SinLfoFactory {
 
 pub struct SquareFactory;
 impl AudioNodeFactory for SquareFactory {
+  fn classifier(&self) -> String { String::from("oscillator/square") }
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SquareNode::new(OscillatorMode::AUDIO, 0.0, 0.5, true)) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
   fn io_spec(&self) -> IOSpec { 
@@ -92,6 +100,7 @@ impl AudioNodeFactory for SquareFactory {
 
 pub struct SquareLfoFactory;
 impl AudioNodeFactory for SquareLfoFactory {
+  fn classifier(&self) -> String { String::from("lfo/square") }
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SquareNode::new(OscillatorMode::LFO, 0.0, 0.5, true)) } 
   fn config_spec(&self) -> Vec<ConfigSpec> {Vec::new() }
   fn io_spec(&self) -> IOSpec { 
@@ -111,6 +120,7 @@ impl AudioNodeFactory for SquareLfoFactory {
 
 pub struct KeyboardFactory;
 impl AudioNodeFactory for KeyboardFactory {
+  fn classifier(&self) -> String { String::from("input/keyboard") }
   fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(KeyboardNode::new(osc_receiver_factory)) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { 
     vec!(
@@ -134,13 +144,14 @@ impl AudioNodeFactory for KeyboardFactory {
 
 pub struct IdentityFactory;
 impl AudioNodeFactory for IdentityFactory {
+  fn classifier(&self) -> String { String::from("output/master") }
   fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(IdentityNode::new()) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
   fn io_spec(&self) -> IOSpec {
-    let inputs = Vec::new();
-    let outputs = vec!(
+    let inputs = vec!(
       ConnectorSpec::new(String::from("INPUT"), String::from(""))
     );
+    let outputs = Vec::new();
     IOSpec { inputs, outputs }
   }
 }

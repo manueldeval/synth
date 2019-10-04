@@ -37,14 +37,14 @@ impl AudioNodeRegistry {
   pub fn get_nodes_config_spec() -> HashMap<AudioNodeRegistry,Vec<ConfigSpec>> {
     AudioNodeRegistry::node_types()
       .iter()
-      .map(|x| (x.clone(),(*x).get_node_factory().config_spec()))
+      .map(|x| (x.clone(),x.get_node_factory().config_spec()))
       .collect()
   }
 
   pub fn get_nodes_io_spec() -> HashMap<AudioNodeRegistry,IOSpec> {
     AudioNodeRegistry::node_types()
       .iter()
-      .map(|x| (x.clone(),(*x).get_node_factory().io_spec()))
+      .map(|x| (x.clone(),x.get_node_factory().io_spec()))
       .collect()
   }
 
@@ -59,15 +59,10 @@ impl AudioNodeRegistry {
   }
 
   pub fn node_infos() ->  HashMap<AudioNodeRegistry,NodeInfos> {
-    let io_spec = AudioNodeRegistry::get_nodes_io_spec();
-    let config_spec = AudioNodeRegistry::get_nodes_config_spec();
     AudioNodeRegistry::node_types()
       .iter()
       .map(|x| (x.clone(),
-                NodeInfos{
-                  config_spec: config_spec.get(x).get_or_insert(&Vec::new()).clone(),
-                  io_spec: io_spec.get(x).get_or_insert(&IOSpec::empty()).clone()
-                })
+                x.get_node_factory().node_infos())
       )
       .collect()
   }

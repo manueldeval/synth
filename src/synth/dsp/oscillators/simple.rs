@@ -3,7 +3,6 @@ use crate::synth::dsp::oscillators::baseoscillator::BaseOscillator;
 use crate::synth::dsp::oscillators::baseoscillator::CommonOscillator;
 use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
 use crate::synth::utils::converters::voltage_to_zero_to_one;
-use crate::synth::dsp::audionode::*;
 
 // ==================================
 // SIN
