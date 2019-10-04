@@ -1,4 +1,5 @@
 /target
 /docs
-/web
+/web/node_modules
+yarn*
 **/*.rs.bk
