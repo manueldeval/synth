@@ -20,11 +20,7 @@ pub enum AudioNodeRegistry {
   Identity
 }
 
-#[derive(Serialize, Deserialize,Clone)]
-pub struct NodeInfos  {
-  config_spec: Vec<ConfigSpec>,
-  io_spec: IOSpec
-}
+
 
 impl AudioNodeRegistry {
   pub fn get_node_factory(&self) -> Box<dyn AudioNodeFactory> {

@@ -3,7 +3,7 @@ use crate::synth::utils::converters::voltage_to_frequency;
 use crate::synth::utils::converters::voltage_to_zero_to_one;
 use crate::synth::utils::converters::voltage_to_boolean;
 use crate::synth::utils::converters::boolean_to_voltage;
-use crate::synth::dsp::audionode::AudioNode;
+use crate::synth::dsp::audionode::*;
 
 pub enum OscillatorMode {
   LFO,

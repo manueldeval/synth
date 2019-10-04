@@ -15,9 +15,9 @@ impl ConnectorSpec {
 
 #[derive(Serialize, Deserialize,Clone)]
 pub struct IOSpec {
-  inputs: Vec<ConnectorSpec>,
-  outputs: Vec<ConnectorSpec>
-} 
+  pub inputs: Vec<ConnectorSpec>,
+  pub outputs: Vec<ConnectorSpec>
+}
 
 impl IOSpec {
   pub fn new(inputs: Vec<ConnectorSpec>,outputs: Vec<ConnectorSpec>) -> IOSpec {
@@ -32,31 +32,23 @@ pub trait AudioNode {
   
   fn set_config(&mut self, _key: &String, _val: &ConfigVal) -> Result<(),String> { Ok(()) }
   
-  fn get_config_spec() -> Vec<ConfigSpec> where Self: Sized { Vec::new() }
+  // fn get_config_spec() -> Vec<ConfigSpec> where Self: Sized { Vec::new() }
 
-  fn get_input_spec() -> Vec<ConnectorSpec> where Self: Sized { Vec::new() }
-
-  fn get_output_spec() -> Vec<ConnectorSpec> where Self: Sized { Vec::new() }
-
-  fn get_io_spec() -> IOSpec where Self: Sized {
-    IOSpec { inputs: Self::get_input_spec(), outputs: Self::get_output_spec()}
-  }
-
-  fn check_key_value_type(key: &String, val: &ConfigVal) -> Result<(),String> where Self: Sized {
-    Self::get_config_spec()
-      .iter()
-      .find(|spec| (*spec).key == *key)
-      .and_then(|spec| {
-        match (&spec.typ,val){
-          (ConfigType::FloatType,ConfigVal::FloatVal(_v)) => Some(()),
-          (ConfigType::StringType,ConfigVal::StringVal(_v)) => Some(()),
-          (ConfigType::BoolType,ConfigVal::BoolVal(_v)) => Some(()),
-          (ConfigType::IntType,ConfigVal::IntVal(_v)) => Some(()),
-          _ => None
-        }
-      })
-      .ok_or(String::from(""))
-  } 
+  // fn check_key_value_type(key: &String, val: &ConfigVal) -> Result<(),String> where Self: Sized {
+  //   Self::get_config_spec()
+  //     .iter()
+  //     .find(|spec| (*spec).key == *key)
+  //     .and_then(|spec| {
+  //       match (&spec.typ,val){
+  //         (ConfigType::FloatType,ConfigVal::FloatVal(_v)) => Some(()),
+  //         (ConfigType::StringType,ConfigVal::StringVal(_v)) => Some(()),
+  //         (ConfigType::BoolType,ConfigVal::BoolVal(_v)) => Some(()),
+  //         (ConfigType::IntType,ConfigVal::IntVal(_v)) => Some(()),
+  //         _ => None
+  //       }
+  //     })
+  //     .ok_or(String::from(""))
+  // } 
 
   fn set_sample_rate(&mut self,_frequency: i32) {}
 

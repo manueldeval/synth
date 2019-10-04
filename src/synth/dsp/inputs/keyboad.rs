@@ -32,25 +32,11 @@ impl KeyboardNode {
 }
 
 impl AudioNode for KeyboardNode {
-  fn get_input_spec() -> Vec<ConnectorSpec> where Self: Sized { Vec::new() }
-
-  fn get_output_spec() -> Vec<ConnectorSpec> where Self: Sized { 
-    vec!(
-      ConnectorSpec::new(String::from("FREQUENCY"), String::from("")),
-      ConnectorSpec::new(String::from("NOTE_ON"), String::from("")),
-    ) 
-  }
-
-  fn get_config_spec() -> Vec<ConfigSpec> { 
-    vec!(
-      ConfigSpec::new(String::from("osc_channel"),ConfigType::StringType)
-    )
-  }
 
   fn set_config(&mut self, key: &String, val: &ConfigVal) -> Result<(),String> {
-    KeyboardNode::check_key_value_type(key,val)?;
-    match key.as_ref() {
-      "osc_channel" => val.as_string().map(|s| self.osc_channel = s),
+    match (key.as_ref(), val.as_string()) {
+      ("osc_channel", Ok(v)) => { self.osc_channel = v; Ok(()) }
+      ("osc_channel", Err(s)) => Err(s),
       _ =>  Err(String::from(format!("Config key {} not implemented for KeyboardNode.",key)))
     }
   }

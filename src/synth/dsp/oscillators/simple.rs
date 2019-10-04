@@ -3,6 +3,7 @@ use crate::synth::dsp::oscillators::baseoscillator::BaseOscillator;
 use crate::synth::dsp::oscillators::baseoscillator::CommonOscillator;
 use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
 use crate::synth::utils::converters::voltage_to_zero_to_one;
+use crate::synth::dsp::audionode::*;
 
 // ==================================
 // SIN
@@ -72,7 +73,6 @@ impl BaseOscillator for SquareNode {
     self.common_oscillator.value = (if self.common_oscillator.sample_clock > (nbr_samples_per_period/(2.0 - ratio))  { 1.0 } else { -1.0 }) * self.common_oscillator.oscillator_amp;
   }
 }
-
 
 //==================================
 // SAW
