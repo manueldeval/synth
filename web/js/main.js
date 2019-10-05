@@ -4,6 +4,12 @@ window.dsp_nodes = {};
 
 const MASTER_NODE_TYPE="Master";
 const MASTER_NODE_ID="master";
+const TYPE_TO_VAL = {
+  FloatType: { outputType: "FloatVal",  converter: parseFloat},
+  IntType: { outputType: "IntVal",      converter: parseInt},
+  StringType: { outputType: "StringVal",converter: function(s){return s;}},
+  BoolType: { outputType: "BoolVal",    converter: function(s){return s==true}},
+};
 var GLOBAL_COUNTER=0;
 
 function generate_id(type){
@@ -68,7 +74,6 @@ function onNodeAdded(lgraph){
   }
   sendCommand({"Create":{"id":node.synth_infos.id,"node_type":node.synth_infos.type }});
   // Now send default config
-  console.log(node.synth_infos.node_infos.config_spec)
   node.synth_infos.node_infos.config_spec.forEach(function(p){
     node.sendPropertyConfig(p.key);
   });
@@ -81,24 +86,18 @@ function onPropertyChanged(name,value){
   });
 
   if (conf_spec){
-    this.properties[name] = value;
+    this.properties[name] = TYPE_TO_VAL[conf_spec.typ].converter(value);
     this.sendPropertyConfig(name);
   }
 }
 
 function sendPropertyConfig(name){
-  var typeToVal = {
-    FloatType: "FloatVal",
-    IntType: "IntVal",
-    StringType: "StringVal",
-    BoolType: "BoolVal"
-  };
   var conf_spec = this.synth_infos.node_infos.config_spec.find(function(e){
     return e.key == name
   });
   if (conf_spec){
     val = {};
-    val[typeToVal[conf_spec.typ]] = this.properties[name];
+    val[TYPE_TO_VAL[conf_spec.typ].outputType] = this.properties[name];
     sendCommand({
       ChangeConfig: { 
         id: this.synth_infos.id ,   
@@ -152,14 +151,21 @@ function make_default_node(type,node,props){
 function generate_properties(type){
   var props = { 
     Keyboard :  { osc_channel: "/keyboard" },
-    Knob:       { osc_channel: "/knob" },
+    Knob:       { osc_channel: "/knob", value: 0.0 },
   }
   return props[type] || {}
 }
 
 function declareNode(type,node){
-  var lGraphNodeType = make_default_node(type, node, generate_properties(type));
-  console.log(type);
+  var lGraphNodeType;
+  console.log("Registering:",type)
+  switch(type){
+    case "Knob":
+      lGraphNodeType = make_knob(type, node, generate_properties(type));
+      break
+    default: 
+      lGraphNodeType = make_default_node(type, node, generate_properties(type));
+  }
   LiteGraph.registerNodeType(node.classifier, lGraphNodeType);
 }
 

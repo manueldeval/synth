@@ -167,7 +167,8 @@ impl AudioNodeFactory for KnobFactory {
   fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(KnobNode::new(osc_receiver_factory,0.0,String::from("/knob"))) } 
   fn config_spec(&self) -> Vec<ConfigSpec> { 
     vec!(
-      ConfigSpec::new(String::from("osc_channel"), ConfigType::StringType)
+      ConfigSpec::new(String::from("osc_channel"), ConfigType::StringType),
+      ConfigSpec::new(String::from("value"), ConfigType::FloatType)
     )  
   }
   fn io_spec(&self) -> IOSpec { 

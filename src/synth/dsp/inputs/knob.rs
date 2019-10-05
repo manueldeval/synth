@@ -28,10 +28,16 @@ impl AudioNode for KnobNode {
   fn set_input_value(&mut self, _input: i32, _value: f32) { }
 
   fn set_config(&mut self, key: &String, val: &ConfigVal) -> Result<(),String> {
-    match (key.as_ref(), val.as_string()) {
-      ("osc_channel", Ok(v)) => { self.osc_name = v; Ok(()) }
-      ("osc_channel", Err(s)) => Err(s),
-      _ =>  Err(String::from(format!("Config key {} not implemented for KeyboardNode.",key)))
+    match key.as_ref(){
+      "osc_channel" => match val.as_string() {
+        Ok(v) => { self.osc_name = v; Ok(()) },
+        Err(s) => Err(s),
+      },
+      "value" => match val.as_f32() {
+        Ok(v) => { self.value = v; Ok(()) },
+        Err(s) => Err(s),
+      },
+      _ =>  Err(String::from(format!("Config key {} not implemented for KnobNode.",key)))
     }
   }
 
