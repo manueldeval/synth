@@ -22,6 +22,10 @@ function normalize_io_name(name){
 
 function sendCommand(command){
   console.log("Sending: ",JSON.stringify(command));
+  axios.post('/commands',command)
+  .catch(function (error) {
+    console.log(error);
+  });
 }
 
 /*
