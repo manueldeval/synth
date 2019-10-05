@@ -74,7 +74,7 @@ impl EditableSynth {
 
   fn init(&mut self) -> Result<(),String> {
     self.graph.reset();
-    let master_audio_node =  AudioNodeRegistry::Identity.create_node(self.sample_rate,&self.event_receiver_factory);
+    let master_audio_node =  AudioNodeRegistry::Master.create_node(self.sample_rate,&self.event_receiver_factory);
     self.graph.add_audio_node(&String::from(EditableSynth::MASTER_ID), master_audio_node)?;
     let master_node = Rc::downgrade(&self.graph.find_node(&String::from(EditableSynth::MASTER_ID)).unwrap());
     self.master_node = master_node;

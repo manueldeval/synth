@@ -4,6 +4,7 @@ use crate::synth::commands::config::ConfigSpec;
 use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
 use crate::synth::dsp::oscillators::simple::*;
 use crate::synth::dsp::inputs::keyboad::*;
+use crate::synth::dsp::inputs::knob::*;
 use crate::synth::dsp::various::identity::*;
 use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::commands::config::*;
@@ -152,6 +153,29 @@ impl AudioNodeFactory for IdentityFactory {
       ConnectorSpec::new(String::from("INPUT"), String::from(""))
     );
     let outputs = Vec::new();
+    IOSpec { inputs, outputs }
+  }
+}
+
+//===============================================================
+// Knob
+//===============================================================
+
+pub struct KnobFactory;
+impl AudioNodeFactory for KnobFactory {
+  fn classifier(&self) -> String { String::from("input/knob") }
+  fn create(&self,osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(KnobNode::new(osc_receiver_factory,0.0,String::from("/knob"))) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { 
+    vec!(
+      ConfigSpec::new(String::from("osc_channel"), ConfigType::StringType)
+    )  
+  }
+  fn io_spec(&self) -> IOSpec { 
+    let inputs = Vec::new();
+    let outputs = vec!(
+      ConnectorSpec::new(String::from("VALUE"), String::from(""))
+  );
+    
     IOSpec { inputs, outputs }
   }
 }

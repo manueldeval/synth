@@ -3,6 +3,7 @@ use crate::synth::dsp::audionode::AudioNode;
 use crate::osc::osc::OSCReceiverFactory;
 use rosc::{OscPacket,OscType};
 use bus::BusReader;
+use crate::synth::commands::config::*;
 
 pub struct KnobNode {
   value: f32,
@@ -25,6 +26,15 @@ impl KnobNode {
 impl AudioNode for KnobNode {
   
   fn set_input_value(&mut self, _input: i32, _value: f32) { }
+
+  fn set_config(&mut self, key: &String, val: &ConfigVal) -> Result<(),String> {
+    match (key.as_ref(), val.as_string()) {
+      ("osc_channel", Ok(v)) => { self.osc_name = v; Ok(()) }
+      ("osc_channel", Err(s)) => Err(s),
+      _ =>  Err(String::from(format!("Config key {} not implemented for KeyboardNode.",key)))
+    }
+  }
+
   fn compute(&mut self) {
     let osc_packet = self.receiver.try_recv();
     match osc_packet {

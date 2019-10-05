@@ -17,7 +17,8 @@ pub enum AudioNodeRegistry {
   Square,
   SquareLfo,
   Keyboard,
-  Identity
+  Master,
+  Knob
 }
 
 
@@ -30,7 +31,8 @@ impl AudioNodeRegistry {
       AudioNodeRegistry::Square    => Box::new(SquareFactory),
       AudioNodeRegistry::SquareLfo => Box::new(SquareLfoFactory),
       AudioNodeRegistry::Keyboard  => Box::new(KeyboardFactory),
-      AudioNodeRegistry::Identity  => Box::new(IdentityFactory)
+      AudioNodeRegistry::Master    => Box::new(IdentityFactory),
+      AudioNodeRegistry::Knob      => Box::new(KnobFactory)
     }
   }
 
