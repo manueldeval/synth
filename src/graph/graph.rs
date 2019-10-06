@@ -154,10 +154,16 @@ mod test_vertices {
 }
 
 
-
+use std::collections::HashSet;
+use std::ops::DerefMut;
+use std::cmp::Ordering;
 //===============================================================
 // Graph
 //===============================================================
+pub trait Visitor<T,U> {
+  fn visit(&mut self, vertice: &mut Vertice<T>);
+  fn result(&self) -> U;
+}
 
 pub struct Graph<T> {
   pub vertices : Vec<Rc<RefCell<Vertice<T>>>>
@@ -169,6 +175,60 @@ impl<T> Graph<T> {
     Graph { 
       vertices: Vec::new()
     }
+  }
+  // TRAVERSAL
+  pub fn idfs<U>(&self,id: &String,visitor: &mut dyn Visitor<T,U>) -> Result<U, String>{
+    // If the first node does not exits, skip.
+
+    let mut visited : HashSet<String> = HashSet::new();
+    let mut stack: Vec<String> = Vec::new();
+    stack.push(id.clone());
+    loop {
+      match stack.pop() {
+        // While stack is not empty...
+        Some(current_id) => {
+          if !visited.contains(&current_id) {
+            let current_node = self
+              .find_node(&current_id)
+              .ok_or(String::from(format!("Node {} does not exists",current_id)))?;
+
+            // Callbak?
+            visitor.visit(current_node.borrow_mut().deref_mut());
+
+            // Mark as visited
+            visited.insert(current_id.clone());
+
+            // Push child nodes
+            let parents: Vec<String>  = current_node.borrow().inputs.iter()
+              .flat_map(|link| link.remote_node.upgrade())
+              .map(|remote_node| remote_node.borrow().id.clone())
+              .filter(|id| id != &current_id)
+              .collect();
+            for parent_id in parents.iter() {
+              stack.push(parent_id.clone());
+            }
+          };
+        },
+        None => { break; }
+      }
+    }
+    Ok(visitor.result())
+  }
+
+  pub fn reorder(&mut self, new_ids_order: &Vec<String>) -> Result<(),String> {
+    self.vertices.sort_by(|v1, v2| {
+      let id1 = v1.borrow().id.clone();
+      let id2 = v2.borrow().id.clone();
+      let pos1 = new_ids_order.iter().position(|r| *r == id1);
+      let pos2 = new_ids_order.iter().position(|r| *r == id2);
+      match (pos1,pos2){
+        (Some(a),Some(b)) => a.cmp(&b),
+        (Some(_),None) => Ordering::Greater,
+        (None,Some(_)) => Ordering::Less,
+        (None,None) => Ordering::Equal
+      }
+    });
+    Ok(())
   }
 
   pub fn add_node(&mut self,id: &String,t: T) -> Result<(),String> {

@@ -20,7 +20,7 @@ use synth::engine::editable::EditableSynth;
 use synth::commands::systemcommand::SystemCommandHandler;
 use player::soundsystem::SoundSystem;
 use crossbeam::crossbeam_channel::bounded;
-
+use synth::commands::controller::*;
 use synth::commands::patch::Patch;
 use web::webserver::*;
 
@@ -52,7 +52,18 @@ fn start(patch:  &Patch) -> Result<(),String> {
 }
 
 fn main() -> Result<(),String> {
-    let _ = start_web_server().join();
+    let (http_command_sender,  controller_command_receiver) = bounded(2000);
+    let (controller_command_sender, synth_command_receiver) = bounded(2000);
+
+    let webserver = Webserver::new("127.0.0.1",8088,http_command_sender);
+    let command_controller_thread = CommandControllerThread::new(controller_command_receiver, controller_command_sender);
+    
+    let webserver_join = webserver.start();
+    let command_controller_join = command_controller_thread.start(); 
+
+    let _ = webserver_join.join();
+    let _ = command_controller_join.join();
+    
     Ok(())
     // let patch = Patch::from_file(&String::from("/home/deman/projets/perso/rustic/synth/patches/patch1.yaml"))?;
     // start(&patch)
