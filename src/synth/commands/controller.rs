@@ -16,15 +16,10 @@ impl ControllerNode {
     ControllerNode {}
   }  
 }
-pub type CtrlGraph = Graph<ControllerNode>;
-pub type CtrlVertice = Vertice<ControllerNode>;
-pub type CtrlLink = Link<ControllerNode>;
+type CtrlGraph = Graph<ControllerNode>;
+type CtrlVertice = Vertice<ControllerNode>;
+type CtrlLink = Link<ControllerNode>;
 
-pub struct CommandController {
-  pub graph: CtrlGraph,
-  pub master_node: Weak<RefCell<CtrlVertice>>,
-  pub sender: Sender<SystemCommand>
-}
 
 struct OrderVisitor{
   ordered_ids: Vec<String>
@@ -43,6 +38,12 @@ impl Visitor<ControllerNode,Vec<String>> for OrderVisitor {
   fn result(&self) -> Vec<String>{
     self.ordered_ids.clone()
   }
+}
+
+pub struct CommandController {
+  graph: CtrlGraph,
+  master_node: Weak<RefCell<CtrlVertice>>,
+  sender: Sender<SystemCommand>
 }
 
 impl CommandController {

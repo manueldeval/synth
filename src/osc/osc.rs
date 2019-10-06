@@ -7,6 +7,7 @@ use std::thread::JoinHandle;
 use std::sync::{Arc, Mutex};
 use bus::{Bus,BusReader};
 
+#[derive(Clone)]
 pub struct OSCReceiverFactory {
   osc_bus: Arc<Mutex<Bus<OscPacket>>>
 }

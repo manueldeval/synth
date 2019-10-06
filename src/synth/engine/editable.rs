@@ -151,3 +151,43 @@ impl SystemCommandHandler for EditableSynth {
   }
 
 }
+
+use crossbeam::crossbeam_channel::*;
+use crate::synth::commands::systemcommand::*;
+use std::thread::JoinHandle;
+use std::thread;
+
+pub struct EditableSynthThread {
+  audio_sender:     Sender<f32>,
+  command_receiver: Receiver<SystemCommand>,
+  sample_rate: i32,
+  osc_receiver_factory: OSCReceiverFactory
+}
+
+impl EditableSynthThread {
+  pub fn new(sample_rate: i32, osc_receiver_factory: OSCReceiverFactory, audio_sender: Sender<f32>, command_receiver: Receiver<SystemCommand>) -> EditableSynthThread {
+    EditableSynthThread {sample_rate, osc_receiver_factory, audio_sender,command_receiver}
+  }
+
+  pub fn start(&self) -> JoinHandle<()> {
+    let audio_sender = self.audio_sender.clone();
+    let command_rec = self.command_receiver.clone();
+    let osc_receiver_factory = self.osc_receiver_factory.clone();
+    let sample_rate = self.sample_rate;
+    thread::spawn(move || {
+      let mut synth = EditableSynth::new(sample_rate, osc_receiver_factory);
+
+      loop {
+        for _ in 0 .. 500 {
+          let _ = audio_sender.send(synth.compute());
+        }
+      
+        if let Ok(command) = command_rec.try_recv() {
+          let _ = synth.receive_command(&command);
+        }
+      }
+    })
+  }
+}
+
+
