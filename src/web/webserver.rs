@@ -27,7 +27,7 @@ impl Webserver {
   }
 
   pub fn start(&self) -> JoinHandle<()> {
-    let bind_ip_port = format!("{}:{}",self.ip,self.port); 
+    let bind_ip_port = format!("{}:{}", self.ip, self.port); 
     let data = self.state.clone();
     thread::spawn(move || {
       HttpServer::new(move || {  

@@ -1,0 +1,5 @@
+  osc_port: 6666
+  osc_ip: 127.0.0.1
+  web_port: 8088
+  web_ip: 127.0.0.1
+  patches_path: ./patches/

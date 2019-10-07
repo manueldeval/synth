@@ -7,6 +7,7 @@ mod player;
 mod osc;
 mod graph;
 mod web;
+mod config;
 
 extern crate cpal;
 
@@ -21,15 +22,21 @@ use player::soundsystem::SoundSystem;
 use crossbeam::crossbeam_channel::bounded;
 use synth::commands::controller::*;
 use web::webserver::*;
+use config::config::*;
+use std::env;
 
 fn main() -> Result<(),String> {
+    let config_path = env::var("SYNTH_CONFIG").unwrap_or(String::from("./config.yml"));
+    let config = load_config(config_path.as_str())?;
+    println!("Config used '{}' : {:?}", config_path, config);
+
     let (http_command_sender,  controller_command_receiver) = bounded(2000);
     let (controller_command_sender, synth_command_receiver) = bounded(2000);
     let (audio_sender, audio_receiver) = bounded(200);
 
-    let webserver = Webserver::new("127.0.0.1",8088,http_command_sender);
+    let webserver = Webserver::new(&config.web_ip,config.web_port,http_command_sender);
     let command_controller_thread = CommandControllerThread::new(controller_command_receiver, controller_command_sender);
-    let osc = OSC::new(String::from("127.0.0.1"),6666);
+    let osc = OSC::new(&config.osc_ip,config.osc_port);
     let mut sound_system = SoundSystem::build();
     let synth_thread = EditableSynthThread::new(sound_system.sample_rate(), osc.receiver_factory(),audio_sender,synth_command_receiver);
 

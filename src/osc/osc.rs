@@ -20,16 +20,16 @@ impl OSCReceiverFactory {
 
 pub struct OSC {
   address: String,
-  port: i16,
+  port: u16,
   osc_bus: Arc<Mutex<Bus<OscPacket>>>
 }
 
 impl OSC {
-  pub fn new(address: String, port: i16) -> OSC {
-    OSC {address: address,port: port, osc_bus: Arc::new(Mutex::new(Bus::new(100)))}
+  pub fn new(address: &String, port: u16) -> OSC {
+    OSC {address: address.clone(),port: port, osc_bus: Arc::new(Mutex::new(Bus::new(100)))}
   }
 
-  fn start_internal(bus: Arc<Mutex<Bus<OscPacket>>>,address: &String , port: i16) -> JoinHandle<()> {
+  fn start_internal(bus: Arc<Mutex<Bus<OscPacket>>>,address: &String , port: u16) -> JoinHandle<()> {
     let address_and_port = format!("{}:{}", address, port); 
     let addr = match SocketAddrV4::from_str(&address_and_port) {
         Ok(addr) => addr,

@@ -6,46 +6,24 @@
     <script type="text/javascript" src="js/knob.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 </head>
-<body style='width:100%; height:100%'>
+<body style='width:100%; height:100%;'>
 
 <style>
+	canvas {
+		display: block;
+		width: 100%;
+		height: 100%; 
+	}
 </style>
-<canvas id='mycanvas' width='1900' height='720' style='border: 1px solid'></canvas>
+
+<canvas id='mycanvas'  style='border: 1px solid'></canvas>
 <script>
 
 var graph = new LGraph();
-
-var canvas = new LGraphCanvas("#mycanvas", graph);
-canvas.getMenuOptions = function(){ return [ { content:"Audio node", has_submenu: true, callback: LGraphCanvas.onMenuAdd } ] }
-
-graph.start()
-
-fetch_nodes_information()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/* Knob ****************/
-  /* Knob ****************/
-
-
+var canvas = new LGraphCanvas("#mycanvas", graph, {skip_rendering:true,autoresize: true});
+canvas.getMenuOptions = function(){ return [ { content:"Audio node", has_submenu: true, callback: LGraphCanvas.onMenuAdd } ] };
+graph.start();
+fetch_nodes_information();
 
 </script>
 </body>
