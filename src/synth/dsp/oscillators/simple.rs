@@ -40,12 +40,12 @@ pub struct SquareNode {
 }
 
 impl SquareNode { 
-  pub const INPUT_RATIO: i32 = 3;
+  pub const INPUT_RATIO: i32 = 4;
 
   pub fn new(osc_mode: OscillatorMode,osc_frequency: f32, amp: f32,is_on: bool) -> SquareNode {
     SquareNode {
       common_oscillator: CommonOscillator::new(osc_mode,osc_frequency,amp,is_on),
-      ratio: -1.0
+      ratio: 0.0
     }
   }
 }
@@ -82,7 +82,7 @@ pub struct SawNode {
 }
 
 impl SawNode { 
-  pub const INPUT_RATIO: i32 = 3;
+  pub const INPUT_RATIO: i32 = 4;
 
   pub const SAW_DOWN: f32 = 1.0;
   pub const SAW_UP: f32 = -1.0;
