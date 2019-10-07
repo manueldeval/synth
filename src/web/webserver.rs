@@ -37,6 +37,7 @@ impl Webserver {
               .route("/dspnodes", web::get().to(dspnodes))
               .route("/commands", web::post().to(command))
       })
+      .disable_signals()
       .bind(bind_ip_port)
       .unwrap()
       .run()
