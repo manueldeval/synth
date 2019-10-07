@@ -66,9 +66,13 @@ impl CommandController {
     Ok(())
   }  
 
-  pub fn reorder(&mut self) -> Result<(),String> {
+  pub fn compute_new_graphe_eorder(&mut self) -> Result<(),String> {
     let ordered_vect = self.graph.idfs(&String::from(CommandController::MASTER_ID), &mut OrderVisitor::new())?;
     self.graph.reorder(&ordered_vect)?;
+    match self.sender.send(SystemCommand::Redorder { order: ordered_vect }) {
+      Ok(()) => Ok(()),
+      Err(e) => Err(String::from(format!("Unable to send the message: {}",e)))
+    }?;
     Ok(())
   }
 }
@@ -81,7 +85,7 @@ impl SystemCommandHandler for CommandController {
       Ok(()) => Ok(()),
       Err(e) => Err(String::from(format!("Unable to send the message: {}",e)))
     }?;
-    self.reorder()
+    self.compute_new_graphe_eorder()
   }
 
   fn add_link(&mut self, src_node: &String, src_port: i32, dst_node: &String, dst_port: i32) -> Result<(),String>  {
@@ -90,7 +94,7 @@ impl SystemCommandHandler for CommandController {
       Ok(()) => Ok(()),
       Err(e) => Err(String::from(format!("Unable to send the message: {}",e)))
     }?;
-    self.reorder()
+    self.compute_new_graphe_eorder()
   }
 
   fn remove_link(&mut self, src_node: &String, src_port: i32, dst_node: &String, dst_port: i32) -> Result<(),String>  {
@@ -99,7 +103,7 @@ impl SystemCommandHandler for CommandController {
       Ok(()) => Ok(()),
       Err(e) => Err(String::from(format!("Unable to send the message: {}",e)))
     }?;
-    self.reorder()
+    self.compute_new_graphe_eorder()
   }
 
   fn remove_node(&mut self, id: &String) -> Result<(),String> {
@@ -109,7 +113,7 @@ impl SystemCommandHandler for CommandController {
         Ok(()) => Ok(()),
         Err(e) => Err(String::from(format!("Unable to send the message: {}",e)))
       }?;
-      self.reorder()
+      self.compute_new_graphe_eorder()
     } else {
       Err(String::from(format!("The node {} cannot be removed.",CommandController::MASTER_ID)))
     }  
@@ -148,6 +152,10 @@ impl SystemCommandHandler for CommandController {
     } else {
       Err(String::from(format!("The node {} does not exists.",id)))
     }
+  }
+
+  fn reorder(&mut self, order: &Vec<String>) -> Result<(),String> {
+    Err(String::from(format!("Command reorder not supported.")))
   }
 
 }

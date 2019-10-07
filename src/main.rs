@@ -17,11 +17,9 @@ extern crate piston_window;
 
 use osc::osc::OSC;
 use synth::engine::editable::*;
-use synth::commands::systemcommand::SystemCommandHandler;
 use player::soundsystem::SoundSystem;
 use crossbeam::crossbeam_channel::bounded;
 use synth::commands::controller::*;
-use synth::commands::patch::Patch;
 use web::webserver::*;
 
 fn main() -> Result<(),String> {

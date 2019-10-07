@@ -150,6 +150,9 @@ impl SystemCommandHandler for EditableSynth {
     }
   }
 
+  fn reorder(&mut self,order: &Vec<String>) -> Result<(),String> {
+    self.graph.reorder(order)
+  }
 }
 
 use crossbeam::crossbeam_channel::*;

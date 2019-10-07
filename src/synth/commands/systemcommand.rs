@@ -11,6 +11,7 @@ pub trait SystemCommandHandler {
   fn rename_node(&mut self, old_id: &String, new_id: &String) -> Result<(),String>;
   fn reset(&mut self) -> Result<(),String>;
   fn change_config(&mut self,id: &String, key: &String, val: &ConfigVal) -> Result<(),String>;
+  fn reorder(&mut self, order: &Vec<String>) -> Result<(),String>;
   fn receive_command(&mut self, command: &SystemCommand) -> Result<(),String> {
     match command {
       SystemCommand::Create { id, node_type } => self.add_audio_node(id, node_type.clone()),
@@ -19,7 +20,8 @@ pub trait SystemCommandHandler {
       SystemCommand::Remove { id } => self.remove_node(id),
       SystemCommand::Reset => self.reset(),
       SystemCommand::Rename { old_id, new_id } => self.rename_node(old_id,new_id),
-      SystemCommand::ChangeConfig { id, key , val }  => self.change_config(id,key,val)
+      SystemCommand::ChangeConfig { id, key , val }  => self.change_config(id,key,val),
+      SystemCommand::Redorder { order }  => self.reorder(order)
     }
   }
 }
@@ -32,7 +34,8 @@ pub enum SystemCommand {
   Remove { id: String },
   Rename { old_id: String, new_id: String },
   Reset,
-  ChangeConfig { id: String, key: String, val: ConfigVal }
+  ChangeConfig { id: String, key: String, val: ConfigVal },
+  Redorder { order: Vec<String> }
 }
 
 impl fmt::Display for SystemCommand {
@@ -46,6 +49,7 @@ impl fmt::Display for SystemCommand {
         SystemCommand::Reset                                           => write!(f,"Reset"),
         SystemCommand::Rename {old_id , new_id }                       => write!(f,"Rename (old_id: {}, new_id:{})",old_id,new_id),
         SystemCommand::ChangeConfig { id, key , val }                  => write!(f,"ChangeConfig (id: {}, key:{}, val:{})",id,key,val),
+        SystemCommand::Redorder { order }                             => write!(f,"Reorder (order: [...])")
       }
     }
 }
