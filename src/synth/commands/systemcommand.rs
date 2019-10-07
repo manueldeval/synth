@@ -49,7 +49,7 @@ impl fmt::Display for SystemCommand {
         SystemCommand::Reset                                           => write!(f,"Reset"),
         SystemCommand::Rename {old_id , new_id }                       => write!(f,"Rename (old_id: {}, new_id:{})",old_id,new_id),
         SystemCommand::ChangeConfig { id, key , val }                  => write!(f,"ChangeConfig (id: {}, key:{}, val:{})",id,key,val),
-        SystemCommand::Redorder { order }                             => write!(f,"Reorder (order: [...])")
+        SystemCommand::Redorder { order: _ }                           => write!(f,"Reorder (order: [...])")
       }
     }
 }

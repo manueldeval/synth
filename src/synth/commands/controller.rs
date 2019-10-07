@@ -154,7 +154,7 @@ impl SystemCommandHandler for CommandController {
     }
   }
 
-  fn reorder(&mut self, order: &Vec<String>) -> Result<(),String> {
+  fn reorder(&mut self, _order: &Vec<String>) -> Result<(),String> {
     Err(String::from(format!("Command reorder not supported.")))
   }
 
