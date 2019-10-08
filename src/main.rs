@@ -32,16 +32,13 @@ fn main() -> Result<(),String> {
     let config = load_config(config_path.as_str())?;
     println!("Config used '{}' : {:?}", config_path, config);
     
-    // let patch_manager = PatchManager::new(config.patches_path.as_str());
-    // println!("{:?}",patch_manager.patches()?);
-
-    // let patch = patch_manager.load_patch("patch1")?;
+    let patch_manager = PatchManager::new(config.patches_path.as_str());
 
     let (http_command_sender,  controller_command_receiver) = bounded(2000);
     let (controller_command_sender, synth_command_receiver) = bounded(2000);
     let (audio_sender, audio_receiver) = bounded(200);
 
-    let webserver = Webserver::new(&config.web_ip,config.web_port,http_command_sender);
+    let webserver = Webserver::new(&config.web_ip,config.web_port,http_command_sender, patch_manager);
     let command_controller_thread = CommandControllerThread::new(controller_command_receiver, controller_command_sender);
     let osc = OSC::new(&config.osc_ip,config.osc_port);
     let mut sound_system = SoundSystem::build();

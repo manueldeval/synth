@@ -1,6 +1,8 @@
 use crate::patch::patch::*;
 use std::fs;
 use std::path::Path;
+use std::fs::File;
+use std::io::Write;
 
 #[derive(Clone)]
 pub struct PatchManager {
@@ -49,6 +51,14 @@ impl PatchManager {
     let base_path = Path::new(&self.base_path);
     let full_path = base_path.join(format!("{}.yaml",patch_name));
     Patch::from_yaml_file(full_path)
+  }
+
+  pub fn save_patch(&self, patch: &Patch, patch_name: &String) -> Result<(),String> {
+    let s: String = patch.to_yaml();
+    let base_path = Path::new(&self.base_path);
+    let full_path = base_path.join(format!("{}.yaml",patch_name));
+    let mut file = File::create(full_path).map_err(|e| format!("Unable to save patch {}, cause: {} ",patch_name,e))?;
+    file.write_all(s.as_bytes()).map_err(|e| format!("Unable to save patch {}, cause: {} ",patch_name,e))
   }
 
 }
