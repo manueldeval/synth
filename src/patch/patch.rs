@@ -2,6 +2,7 @@ use std::fs;
 use crate::synth::commands::systemcommand::*;
 
 use serde::{Serialize, Deserialize};
+use std::path::Path;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Patch {
@@ -21,15 +22,20 @@ impl Patch {
     serde_yaml::from_str(serialized).map_err(|e| format!("{}",e))
   }
 
-  pub fn from_json_file(file_name: &String) -> Result<Patch,String> {
-    fs::read_to_string(file_name)
-      .map_err(|err| format!("{}",err))
+  pub fn from_json_file<P: AsRef<Path>>(file_name: P) -> Result<Patch,String> {
+    let file = file_name.as_ref().as_os_str().to_str().unwrap_or("Unkown");
+
+    fs::read_to_string(file)
+      .map_err(|err| format!("Unable to load patch {} : {}",&file, err))
       .and_then(|content| Self::from_json(&content))
   }
 
-  pub fn from_yaml_file(file_name: &String) -> Result<Patch,String> {
-    fs::read_to_string(file_name)
-      .map_err(|err| format!("{}",err))
+  pub fn from_yaml_file<P: AsRef<Path>>(file_name: P) -> Result<Patch,String> {
+    
+    let file = file_name.as_ref().as_os_str().to_str().unwrap_or("Unkown");
+
+    fs::read_to_string(file)
+      .map_err(|err| format!("Unable to load patch {} : {}",&file, err))
       .and_then(|content| Self::from_yaml(&content))
   }
 

@@ -32,8 +32,10 @@ fn main() -> Result<(),String> {
     let config = load_config(config_path.as_str())?;
     println!("Config used '{}' : {:?}", config_path, config);
     
-    let patch_manager = PatchManager::new(config.patches_path.as_str());
-    println!("{:?}",patch_manager.patches()?);
+    // let patch_manager = PatchManager::new(config.patches_path.as_str());
+    // println!("{:?}",patch_manager.patches()?);
+
+    // let patch = patch_manager.load_patch("patch1")?;
 
     let (http_command_sender,  controller_command_receiver) = bounded(2000);
     let (controller_command_sender, synth_command_receiver) = bounded(2000);

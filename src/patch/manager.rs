@@ -45,5 +45,11 @@ impl PatchManager {
     file_name == ".yaml"
   }
 
+  pub fn load_patch(&self, patch_name: &str) -> Result<Patch,String> {
+    let base_path = Path::new(&self.base_path);
+    let full_path = base_path.join(format!("{}.yaml",patch_name));
+    Patch::from_yaml_file(full_path)
+  }
+
 }
 
