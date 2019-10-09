@@ -26,25 +26,25 @@ impl PatchManager {
         .map(|files| {
           files.flat_map(|e| e)
           .flat_map(|e| e.file_name().into_string().into_iter())
-          .filter(PatchManager::is_patch_extension)
-          .map(PatchManager::remove_extension)
+          .filter(|e| PatchManager::is_patch_extension(&e))
+          .map(|e| PatchManager::remove_extension(&e))
           .collect()
         })                 
     }
   }
 
-  pub fn remove_extension(file_name: String) -> String {
-    let mut file_name_upper = file_name.to_ascii_uppercase();
-    let dot_offset = file_name_upper.find('.').unwrap_or(file_name.len());
-    file_name_upper.replace_range(dot_offset .. file_name.len(), "");
-    file_name_upper.clone()
+  pub fn remove_extension(file_name: &String) -> String {
+    let mut cloned = file_name.clone();
+    let dot_offset = cloned.find('.').unwrap_or(file_name.len());
+    cloned.replace_range(dot_offset .. file_name.len(), "");
+    cloned
   }
 
   pub fn is_patch_extension(file_name: &String) -> bool {
-    let mut file_name_upper = file_name.to_ascii_uppercase();
-    let dot_offset = file_name_upper.find('.').unwrap_or(file_name.len());
-    file_name_upper.replace_range(..dot_offset, "");
-    file_name == ".yaml"
+    let mut cloned = file_name.clone();
+    let dot_offset = cloned.find('.').unwrap_or(cloned.len());
+    cloned.replace_range(..dot_offset, "");
+    cloned == ".yaml"
   }
 
   pub fn load_patch(&self, patch_name: &str) -> Result<Patch,String> {
@@ -56,7 +56,7 @@ impl PatchManager {
   pub fn save_patch(&self, patch: &Patch, patch_name: &String) -> Result<(),String> {
     let s: String = patch.to_yaml();
     let base_path = Path::new(&self.base_path);
-    let full_path = base_path.join(format!("{}.yaml",patch_name));
+    let full_path = base_path.join(format!("{}.yaml",patch_name.to_ascii_lowercase()));
     let mut file = File::create(full_path).map_err(|e| format!("Unable to save patch {}, cause: {} ",patch_name,e))?;
     file.write_all(s.as_bytes()).map_err(|e| format!("Unable to save patch {}, cause: {} ",patch_name,e))
   }

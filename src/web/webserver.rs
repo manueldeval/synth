@@ -54,8 +54,8 @@ impl Webserver {
 
 fn post_patch(state: web::Data<AppState>,patch_name: web::Path<String>,patch: web::Json<Patch>) -> impl Responder {
   match state.patch_manager.save_patch(&patch,&patch_name) {
-    Ok(p) => HttpResponse::Ok(),
-    Err(s) => HttpResponse::InternalServerError()
+    Ok(_) => HttpResponse::Ok(),
+    Err(_) => HttpResponse::InternalServerError()
   }
 }
 
@@ -87,7 +87,7 @@ fn index() -> impl Responder {
       .body(r#"
     <html>
       <head>
-        <meta http-equiv="refresh" content="0;URL=./static/index.html\">
+        <meta http-equiv="refresh" content="0;URL=./static/index.html">
       </head>
     </html>
   "#)
@@ -103,6 +103,6 @@ fn command(state: web::Data<AppState>,command: web::Json<SystemCommand>) -> impl
     println!("Command received: {}",command);
     match state.sender.send(command.into_inner()){
       Ok(_)   => HttpResponse::Ok(),
-      Err(s)  => HttpResponse::InternalServerError()
+      Err(_)  => HttpResponse::InternalServerError()
     }
 }
