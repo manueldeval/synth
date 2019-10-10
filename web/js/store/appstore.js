@@ -8,7 +8,8 @@ define(function (require) {
 
   var Store = {
     state: {
-      nodeTypes: []
+      nodeTypes: [],
+      patches: []
     },
     getGraph(){
       return graph;
@@ -26,6 +27,16 @@ define(function (require) {
     },
     clearNodeTypes(){
       this.state.nodeTypes.length = 0
+    },
+    fetchPatches() {
+      return axios.get('/patches').then((response) => {
+        var datas = response.data;
+        this.clearNodeTypes();
+        this.state.patches.push(... datas.sort());
+      })
+    },
+    clearPatches(){
+      this.state.patches.length = 0
     }
   }
 

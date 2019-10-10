@@ -17,7 +17,7 @@ define(function (require) {
   let Store = require('store/appstore')
   // Init at startup
   Store.fetchNodeType();
-
+  Store.fetchPatches();
 
   require('components/app');
   // Launch
