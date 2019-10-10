@@ -1,0 +1,20 @@
+.navbar {
+  background-color: #333333
+}
+
+.tab-pane {
+  background-color: #666666
+
+}
+
+body {
+  background-color: #666666
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  background-color: #888888;
+  color: white
+}
+.nav-link a {
+  color: white
+} 

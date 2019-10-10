@@ -8,21 +8,14 @@ define(function (require) {
   Vue.component('App', {
     template: `<div>
       <Menu></Menu>
-      <div style="height:100%;">
-      <b-card no-body>
-        <b-tabs card>
-          <b-tab title="Patches" active >
-            <Patches></Patches>
+        <b-tabs>
+          <b-tab title="Editor" active >
+          <Graph></Graph>
           </b-tab>
-          <b-tab title="Editor">
-            <Graph></Graph>
+          <b-tab title="Patches">
+          <Patches></Patches>
           </b-tab>
         </b-tabs>
-      </b-card>
-
-
-      
-      
     </div>`,
     });
 });

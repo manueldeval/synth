@@ -19,6 +19,6 @@ define(function (require) {
         nodeTypes.forEach(nt => registerNodeType(nt));
       }
     },
-    template: `<div style="height:300px;"><canvas ref="graphCanvas"></canvas></div>`,  
+    template: `<div style="height:600px;"><canvas ref="graphCanvas"></canvas></div>`,  
   });
 });

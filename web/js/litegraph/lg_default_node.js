@@ -29,6 +29,9 @@ define(function (require) {
         this.properties = props
       }
     };
+    lGraphNodeType.color = "#2a363b";
+    lGraphNodeType.bgcolor = "#3f5159";
+    lGraphNodeType.groupcolor = "#3f789e";
     
     lGraphNodeType.title = type;
     lGraphNodeType.desc = type;
