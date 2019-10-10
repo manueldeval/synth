@@ -11,11 +11,8 @@ define(function (require) {
       }
     },
     mounted: function() {
-      graph = new LGraph();
-      canvas = new LGraphCanvas(this.$refs.graphCanvas, graph, {autoresize: true});
-      canvas.getMenuOptions = function(){ return [ { content:"Audio node", has_submenu: true, callback: LGraphCanvas.onMenuAdd } ] };
-      
-      console.log("mounted",this.$refs.graphCanvas);
+      canvas = new LGraphCanvas(this.$refs.graphCanvas, Store.getGraph(), {autoresize: true});
+      canvas.getMenuOptions = function(){ return [ { content:"Audio node", has_submenu: true, callback: LGraphCanvas.onMenuAdd } ] };      
     },
     watch: {
       nodeTypes: function(nodeTypes){

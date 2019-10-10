@@ -148,7 +148,7 @@ define(function (require) {
       this.properties.value =
           this.properties.min +
           (this.properties.max - this.properties.min) * this.value;
-      sendPropertyConfig.bind(this)("value")
+      helper.sendPropertyConfig.bind(this)("value")
       this.oldmouse = m;
       this.setDirtyCanvas(true);
     };
