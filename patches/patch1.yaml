@@ -1,17 +1,49 @@
-
-
+---
 commands:
-  # Suppression du graphe actuel
-  - Reset
-  
-  # Creation des noeuds de traitement
-  - Create: { id: keyboard, node_type: Keyboard }
-  - ChangeConfig: { id: keyboard,   key: osc_channel,   val: { StringVal: '/keyboard42' }}
-  
-  - Create: { id: a,        node_type: Sin }
-  - Create: { id: master,   node_type: Master }
-
-  # Lien des noeuds
-  - Link: { src_node: keyboard,     src_port: 0,    dst_node: a,        dst_port: 0 }
-  - Link: { src_node: keyboard,     src_port: 1,    dst_node: a,        dst_port: 2 }
-  - Link: { src_node: a,            src_port: 0,    dst_node: master,   dst_port: 0 }
+  - Create:
+      id: keyboard
+      node_type: Keyboard
+  - Create:
+      id: master
+      node_type: Master
+  - Create:
+      id: a
+      node_type: Sin
+  - Create:
+      id: "Knob#7rid8x"
+      node_type: Knob
+  - Link:
+      src_node: keyboard
+      src_port: 0
+      dst_node: a
+      dst_port: 0
+  - Link:
+      src_node: keyboard
+      src_port: 1
+      dst_node: a
+      dst_port: 2
+  - Link:
+      src_node: a
+      src_port: 0
+      dst_node: master
+      dst_port: 0
+  - Link:
+      src_node: "Knob#7rid8x"
+      src_port: 0
+      dst_node: a
+      dst_port: 1
+  - ChangeConfig:
+      id: keyboard
+      key: osc_channel
+      val:
+        StringVal: /keyboard42
+  - ChangeConfig:
+      id: "Knob#7rid8x"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#7rid8x"
+      key: value
+      val:
+        FloatVal: 0.0

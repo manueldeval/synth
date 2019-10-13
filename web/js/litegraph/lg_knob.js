@@ -166,7 +166,7 @@ define(function (require) {
           return true; //block
       } else {
         var self = this;
-        onPropertyChanged.bind(self)(name,value);
+        helper.onPropertyChanged.bind(self)(name,value);
       }
     }
     knob.prototype.onExecute = function(){}

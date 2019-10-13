@@ -5,12 +5,28 @@ define(function (require) {
   Vue.component('Menu', {
     data:  function () {
       return { 
-        state: Store.state
+        state: Store.state,
+        newPatch: ''
       }
     },
     methods: {
       patchSelected(s){
         Store.selectPatch(s);
+      },
+      savePatch(){
+        if (this.state.current_patch == "New"){
+          this.$refs['modal'].show()
+        } else {
+          Store.savePatch();
+        }
+      },
+      handleOk(){
+        if (this.newPatch != null && 
+          this.newPatch != '' && 
+          this.newPatch !="New") {
+            this.state.current_patch = this.newPatch;
+            this.savePatch();
+        }
       }
     },
     template: `
@@ -24,6 +40,15 @@ define(function (require) {
   
         <b-navbar-nav class="ml-auto">
 
+          <b-nav-form>
+            <b-button 
+              v-if="state.dirty"
+              @click="savePatch()"
+              size="sm" class="my-2 my-sm-0" >
+              Save
+            </b-button>
+          </b-nav-form>
+  
           <b-nav-item-dropdown text="Patch" right>
             <b-dropdown-item v-for="item in state.patches" 
               href="#" 
@@ -36,6 +61,14 @@ define(function (require) {
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+
+    <b-modal ref="modal" id="modal-sm" size="sm" title="Enter a patch name" @ok="handleOk">
+      <b-form-input id="patch_id"
+                    v-model="newPatch"
+                    required>
+      </b-form-input>
+    </b-modal>
+
   </div>`,
   });
 });

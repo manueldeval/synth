@@ -1,0 +1,13 @@
+---
+commands:
+  - Create:
+      id: "SinLfo#9e0u24"
+      node_type: SinLfo
+  - Create:
+      id: "Sin#lq27x5"
+      node_type: Sin
+  - Link:
+      src_node: "SinLfo#9e0u24"
+      src_port: 0
+      dst_node: "Sin#lq27x5"
+      dst_port: 0
