@@ -6,10 +6,11 @@ commands:
   
   # Creation des noeuds de traitement
   - Create: { id: keyboard, node_type: Keyboard }
-  - ChangeConfig: { id: keyboard,   key: osc_channel,   val: { StringVal: '/keyboard' }}
+  - ChangeConfig: { id: keyboard,   key: osc_channel,   val: { StringVal: '/keyboard42' }}
   
   - Create: { id: a,        node_type: Sin }
-  
+  - Create: { id: master,   node_type: Master }
+
   # Lien des noeuds
   - Link: { src_node: keyboard,     src_port: 0,    dst_node: a,        dst_port: 0 }
   - Link: { src_node: keyboard,     src_port: 1,    dst_node: a,        dst_port: 2 }

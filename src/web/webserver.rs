@@ -99,10 +99,17 @@ fn dspnodes() -> impl Responder {
       .body(serde_json::to_string(&AudioNodeRegistry::node_infos()).unwrap())
 }
 
-fn command(state: web::Data<AppState>,command: web::Json<SystemCommand>) -> impl Responder {
-    println!("Command received: {}",command);
-    match state.sender.send(command.into_inner()){
-      Ok(_)   => HttpResponse::Ok(),
-      Err(_)  => HttpResponse::InternalServerError()
-    }
+fn command(state: web::Data<AppState>,commands: web::Json<Vec<SystemCommand>>) -> impl Responder {
+
+  commands
+    .iter()
+    .map(|c| { println!("Web received command: {}",c ); c })
+    .map(|c| state.sender.send(c.clone()))
+    .find(|r| match *r {
+      Ok(_) => false,
+      Err(_) => true
+    })
+    .map(|_| HttpResponse::InternalServerError())
+    .unwrap_or(HttpResponse::Ok())
+
 }

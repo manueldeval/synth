@@ -16,6 +16,7 @@ define(function (require) {
   // Load app state
   let Store = require('store/appstore')
   // Init at startup
+  Store.resetSynth();
   Store.fetchNodeType();
   Store.fetchPatches();
 

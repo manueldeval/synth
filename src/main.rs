@@ -28,6 +28,9 @@ use std::env;
 use patch::manager::*;
 
 fn main() -> Result<(),String> {
+    let reset = synth::commands::systemcommand::SystemCommand::Reset;
+    println!("{}",serde_json::to_string(&reset).unwrap());
+
     let config_path = env::var("SYNTH_CONFIG").unwrap_or(String::from("./config.yml"));
     let config = load_config(config_path.as_str())?;
     println!("Config used '{}' : {:?}", config_path, config);

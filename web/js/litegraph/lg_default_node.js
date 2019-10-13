@@ -8,7 +8,7 @@ define(function (require) {
   DEFAULT NODE FACTORY
   =================================================
   */
-  return function make_default_node(type,node,props){
+  return function make_default_node(type,node,props,commandSender){
     var lGraphNodeType = function()
     {
       // Generate i/o for LGraph
@@ -41,6 +41,8 @@ define(function (require) {
     lGraphNodeType.prototype.onConnectionsChange = helper.onConnectionsChange;
     lGraphNodeType.prototype.onPropertyChanged = helper.onPropertyChanged;
     lGraphNodeType.prototype.sendPropertyConfig = helper.sendPropertyConfig;
+    lGraphNodeType.prototype.sendCommand = commandSender;
+    
     return lGraphNodeType;
 
   }   

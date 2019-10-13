@@ -1,3 +1,12 @@
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #666666
+}
+
 .navbar {
   background-color: #333333
 }
@@ -7,10 +16,6 @@
 
 }
 
-body {
-  background-color: #666666
-}
-
 .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
   background-color: #888888;
   color: white
@@ -18,3 +23,7 @@ body {
 .nav-link a {
   color: white
 } 
+
+.tabcontent {
+  height: 100%;
+}

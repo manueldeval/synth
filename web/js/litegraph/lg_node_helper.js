@@ -11,23 +11,31 @@ define(function (require) {
     StringType: { outputType: "StringVal",converter: function(s){return s;}},
     BoolType: { outputType: "BoolVal",    converter: function(s){return s==true}},
   };
-  var GLOBAL_COUNTER=0;
 
+  function generateUID() {
+    // I generate the UID from two parts here 
+    // to ensure the random number provide enough bits.
+    var firstPart = (Math.random() * 46656) | 0;
+    var secondPart = (Math.random() * 46656) | 0;
+    firstPart = ("000" + firstPart.toString(36)).slice(-3);
+    secondPart = ("000" + secondPart.toString(36)).slice(-3);
+    return firstPart + secondPart;
+  }
   function generate_id(type){
-    return (type == MASTER_NODE_TYPE)? MASTER_NODE_ID: type+"#"+(GLOBAL_COUNTER++); 
+    return (type == MASTER_NODE_TYPE)? MASTER_NODE_ID: type+"#"+generateUID(); 
   }
 
   function normalize_io_name(name){
     return  name.toLowerCase().replace(/_/g, ' ')
   }
 
-  function sendCommand(command){
-    console.log("Sending: ",JSON.stringify(command));
-    axios.post('/commands',command)
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
+  // function sendCommand(command){
+  //   console.log("Sending: ",JSON.stringify(command));
+  //   axios.post('/commands',command)
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+  // }
 
   /*
   =================================================
@@ -39,7 +47,7 @@ define(function (require) {
     if (node.synth_infos.id == MASTER_NODE_ID){
       return;
     }
-    sendCommand({"Remove":{"id":node.synth_infos.id}})
+    node.sendCommand({"Remove":{"id":node.synth_infos.id}})
   }
 
   function onConnectionsChange(io,input_nbr,create,link){
@@ -49,14 +57,14 @@ define(function (require) {
     var inputNode = this;
     var outputNode = this.lgraph.getNodeById(link.origin_id);
     if (create){
-      sendCommand({
+      inputNode.sendCommand({
         Link: {
           src_node :outputNode.synth_infos.id,  src_port: link.origin_slot,
           dst_node :inputNode.synth_infos.id,  dst_port: input_nbr
         }
       });
     } else {
-      sendCommand({
+      inputNode.sendCommand({
         Unlink: {
           src_node :outputNode.synth_infos.id,  src_port: link.origin_slot,
           dst_node :inputNode.synth_infos.id,  dst_port: input_nbr
@@ -77,7 +85,7 @@ define(function (require) {
       // No need to create server side the master node... it's a default node.
       return;
     }
-    sendCommand({"Create":{"id":node.synth_infos.id,"node_type":node.synth_infos.type }});
+    node.sendCommand({"Create":{"id":node.synth_infos.id,"node_type":node.synth_infos.type }});
     // Now send default config
     node.synth_infos.node_infos.config_spec.forEach(function(p){
       node.sendPropertyConfig(p.key);
@@ -103,7 +111,7 @@ define(function (require) {
     if (conf_spec){
       val = {};
       val[TYPE_TO_VAL[conf_spec.typ].outputType] = this.properties[name];
-      sendCommand({
+      this.sendCommand({
         ChangeConfig: { 
           id: this.synth_infos.id ,   
           key: name,   

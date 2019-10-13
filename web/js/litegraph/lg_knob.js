@@ -1,7 +1,7 @@
 define(function (require) {
   let helper = require("litegraph/lg_node_helper");
 
-  return function make_knob(type, node,props){
+  return function make_knob(type, node,props,commandSender){
 
     var knob = function() {
       this.addOutput("","number");
@@ -174,7 +174,8 @@ define(function (require) {
     knob.prototype.onRemoved = helper.onNodeRemoved;
     knob.prototype.onConnectionsChange = helper.onConnectionsChange;
     knob.prototype.sendPropertyConfig = helper.sendPropertyConfig;
-  
+    knob.prototype.sendCommand = commandSender;
+
     return knob;
   }
 

@@ -12,13 +12,41 @@ define(function (require) {
     },
     mounted: function() {
       canvas = new LGraphCanvas(this.$refs.graphCanvas, Store.getGraph(), {autoresize: true});
+      canvas.show_info = false;
+      // Overload LGraphCanvas because the heigh is not exacty equals!
+      // When the canvas grow, the di grow too :(
+      LGraphCanvas.prototype.resize = function(width, height)
+      {
+        if(!width && !height)
+        {
+          var parent = this.canvas.parentNode;
+          width = parent.offsetWidth;
+          height = parent.offsetHeight;          
+        }
+        if(this.canvas.width > width && Math.abs(this.canvas.height - height) < 10)
+          return;
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.bgcanvas.width = this.canvas.width;
+        this.bgcanvas.height = this.canvas.height;
+        this.setDirty(true,true);
+      }
+      canvas.resize();
+
       canvas.getMenuOptions = function(){ return [ { content:"Audio node", has_submenu: true, callback: LGraphCanvas.onMenuAdd } ] };      
+      window.addEventListener("resize", function() { 
+        canvas.resize(10,10);
+        canvas.resize(); 
+      } );
     },
     watch: {
       nodeTypes: function(nodeTypes){
-        nodeTypes.forEach(nt => registerNodeType(nt));
+        nodeTypes.forEach(nt => registerNodeType(nt,Store.sendCommand.bind(Store)));
       }
     },
-    template: `<div style="height:600px;"><canvas ref="graphCanvas"></canvas></div>`,  
+    template: `
+    <div class= "flex-grow-1" style='height:100%;background-color: #8b0000;overflow:hidden '>
+      <canvas style="" ref="graphCanvas"></canvas>
+    </div>`,  
   });
 });

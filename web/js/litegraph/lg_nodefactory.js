@@ -11,15 +11,14 @@ define(function (require) {
     return props[type] || {}
   }
   
-  return function registerNodeType(node){
+  return function registerNodeType(node,commandSender){
     var lGraphNodeType;
-    console.log("Registering:",node.type)
     switch(node.type){
       case "Knob":
-        lGraphNodeType = make_knob(node.type, node, generate_properties(node.type));
+        lGraphNodeType = make_knob(node.type, node, generate_properties(node.type),commandSender);
         break
       default: 
-        lGraphNodeType = make_default_node(node.type, node, generate_properties(node.type));
+        lGraphNodeType = make_default_node(node.type, node, generate_properties(node.type),commandSender);
     }
     LiteGraph.registerNodeType(node.classifier, lGraphNodeType);
   }
