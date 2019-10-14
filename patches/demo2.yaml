@@ -1,0 +1,49 @@
+---
+commands:
+  - Create:
+      id: "Knob#j3d5ao"
+      node_type: Knob
+  - Create:
+      id: "Knob#6qvjgk"
+      node_type: Knob
+  - Create:
+      id: "Sin#ts9mjx"
+      node_type: Sin
+  - Create:
+      id: master
+      node_type: Master
+  - Link:
+      src_node: "Sin#ts9mjx"
+      src_port: 0
+      dst_node: master
+      dst_port: 0
+  - Link:
+      src_node: "Knob#6qvjgk"
+      src_port: 0
+      dst_node: "Sin#ts9mjx"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#j3d5ao"
+      src_port: 0
+      dst_node: "Sin#ts9mjx"
+      dst_port: 1
+  - ChangeConfig:
+      id: "Knob#j3d5ao"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#j3d5ao"
+      key: value
+      val:
+        FloatVal: -0.5199999809265137
+  - ChangeConfig:
+      id: "Knob#6qvjgk"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#6qvjgk"
+      key: value
+      val:
+        FloatVal: -8.881784197001253e-16

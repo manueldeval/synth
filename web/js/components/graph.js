@@ -13,6 +13,18 @@ define(function (require) {
     mounted: function() {
       canvas = new LGraphCanvas(this.$refs.graphCanvas, Store.getGraph(), {autoresize: true});
       canvas.show_info = false;
+       
+
+      // Put hooks on pos (to set dirty flag)
+      Object.defineProperty( canvas, "node_dragged", {
+        set: function(v) { 
+          this._node_dragged = v; 
+          Store.setDirty(true); 
+        },
+        get: function() { return this._node_dragged; },
+        enumerable: true
+      });
+
       // Overload LGraphCanvas because the heigh is not exacty equals!
       // When the canvas grow, the di grow too :(
       LGraphCanvas.prototype.resize = function(width, height)
@@ -41,7 +53,10 @@ define(function (require) {
     },
     watch: {
       nodeTypes: function(nodeTypes){
-        nodeTypes.forEach(nt => registerNodeType(nt,Store.sendCommand.bind(Store)));
+        nodeTypes.forEach(nt => registerNodeType(nt,
+          Store.sendCommand.bind(Store),
+          () => Store.setDirty(true)
+          ));
       }
     },
     template: `

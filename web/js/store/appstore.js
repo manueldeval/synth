@@ -162,6 +162,9 @@ define(function (require) {
         .catch(function (error) {
           console.log(error);
         })
+    },
+    setDirty(val){
+      this.state.dirty = val;
     }
   }
 

@@ -8,7 +8,7 @@ define(function (require) {
   DEFAULT NODE FACTORY
   =================================================
   */
-  return function make_default_node(type,node,props,commandSender){
+  return function make_default_node(type,node,props,commandSender,dirtyFn){
     var lGraphNodeType = function()
     {
       // Generate i/o for LGraph
@@ -28,6 +28,12 @@ define(function (require) {
       if (props) {
         this.properties = props
       }
+      // Put hooks on title and pos
+      Object.defineProperty( this, "title", {
+        set: function(v) { this._title = v; dirtyFn() },
+        get: function() { return this._title; },
+        enumerable: true
+      });
     };
     lGraphNodeType.color = "#2a363b";
     lGraphNodeType.bgcolor = "#3f5159";

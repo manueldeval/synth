@@ -1,7 +1,7 @@
 define(function (require) {
   let helper = require("litegraph/lg_node_helper");
 
-  return function make_knob(type, node,props,commandSender){
+  return function make_knob(type, node,props,commandSender,dirtyFn){
 
     var knob = function() {
       this.addOutput("","number");
@@ -20,6 +20,12 @@ define(function (require) {
         node_infos: node,
         id: helper.generate_id(type)
       };
+      // Put hooks on title and pos
+      Object.defineProperty( this, "title", {
+        set: function(v) { this._title = v; dirtyFn() },
+        get: function() { return this._title; },
+        enumerable: true
+      });
     }
   
     knob.title = type;
