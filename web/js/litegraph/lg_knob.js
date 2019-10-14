@@ -31,7 +31,9 @@ define(function (require) {
     knob.title = type;
     knob.desc = type;
     knob.size = [60, 80];
-  
+    knob.color = "#2a363b";
+    knob.bgcolor = "#3f5159";
+    knob.groupcolor = "#3f789e";
     knob.prototype.onDrawForeground = function(ctx) {
       if (this.flags.collapsed) {
           return;
