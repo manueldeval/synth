@@ -3,8 +3,12 @@ use crate::synth::commands::config::ConfigSpec;
 
 use crate::synth::dsp::oscillators::baseoscillator::OscillatorMode;
 use crate::synth::dsp::oscillators::simple::*;
+use crate::synth::dsp::oscillators::rand::*;
 use crate::synth::dsp::inputs::keyboad::*;
 use crate::synth::dsp::inputs::knob::*;
+use crate::synth::dsp::various::samplehold::*;
+use crate::synth::dsp::filters::moog::*;
+
 use crate::synth::dsp::various::identity::*;
 use crate::osc::osc::OSCReceiverFactory;
 use crate::synth::commands::config::*;
@@ -28,7 +32,7 @@ pub trait AudioNodeFactory {
 }
 
 //===============================================================
-// Sin Node
+// Base oscillator helper
 //===============================================================
 fn baseoscillator_input_spec() -> Vec<ConnectorSpec> { 
   vec!(
@@ -74,6 +78,48 @@ impl AudioNodeFactory for SinLfoFactory {
     IOSpec { inputs: baseoscillator_input_spec() ,outputs: baseoscillator_output_spec() }
   }
 }
+
+//===============================================================
+// Saw Node
+//===============================================================
+
+pub struct SawFactory;
+impl AudioNodeFactory for SawFactory {
+  fn classifier(&self) -> String { String::from("oscillator/saw") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SawNode::new(OscillatorMode::AUDIO, 0.0, 0.5, true,0.0)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let mut inputs = baseoscillator_input_spec();
+    inputs.push(ConnectorSpec::new(String::from("RATIO"), String::from("")));
+    // Outputs
+    let outputs = baseoscillator_output_spec();
+    
+    IOSpec { inputs, outputs }
+  }
+}
+
+//===============================================================
+// Lfo Saw Node
+//===============================================================
+
+pub struct SawLfoFactory;
+impl AudioNodeFactory for SawLfoFactory {
+  fn classifier(&self) -> String { String::from("lfo/saw") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SawNode::new(OscillatorMode::LFO, 0.0, 0.5, true,0.0)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> {Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let mut inputs = baseoscillator_input_spec();
+    inputs.push(ConnectorSpec::new(String::from("RATIO"), String::from("")));
+    // Outputs
+    let outputs = baseoscillator_output_spec();
+    
+    IOSpec { inputs, outputs }
+  }
+}
+
+
 
 //===============================================================
 // Square Node
@@ -177,6 +223,78 @@ impl AudioNodeFactory for KnobFactory {
       ConnectorSpec::new(String::from("VALUE"), String::from(""))
   );
     
+    IOSpec { inputs, outputs }
+  }
+}
+
+
+//===============================================================
+// Rand Node
+//===============================================================
+
+pub struct RandFactory;
+impl AudioNodeFactory for RandFactory {
+  fn classifier(&self) -> String { String::from("oscillator/rand") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(RandNode::new(0.0)) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let inputs = vec!(
+      ConnectorSpec::new(String::from("AMP"), String::from("")),
+      ConnectorSpec::new(String::from("TRIGGER"), String::from(""))
+    );
+    // Outputs
+    let outputs =   vec!(
+      ConnectorSpec::new(String::from("OSC"), String::from("")),
+    ); 
+    IOSpec { inputs, outputs }
+  }
+}
+//===============================================================
+// Sample Hold Node
+//===============================================================
+
+pub struct SampleHoldFactory;
+impl AudioNodeFactory for SampleHoldFactory {
+  fn classifier(&self) -> String { String::from("various/sample_and_hold") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(SampleHoldNode::new()) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let inputs = vec!(
+      ConnectorSpec::new(String::from("TRIGGER"), String::from("")),
+      ConnectorSpec::new(String::from("INPUT"), String::from(""))
+    );
+    // Outputs
+    let outputs =   vec!(
+      ConnectorSpec::new(String::from("OUTPUT"), String::from("")),
+    ); 
+    IOSpec { inputs, outputs }
+  }
+}
+
+//===============================================================
+// Moog filter
+//===============================================================
+
+pub struct MoogFilterFactory;
+impl AudioNodeFactory for MoogFilterFactory {
+  fn classifier(&self) -> String { String::from("filter/sample_and_hold") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(MoogFilterNode::new()) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let inputs = vec!(
+      ConnectorSpec::new(String::from("INPUT"), String::from("")),
+      ConnectorSpec::new(String::from("CUTOFF"), String::from("")),
+      ConnectorSpec::new(String::from("RESONANCE"), String::from("")),
+    );
+    // Outputs
+    let outputs =   vec!(
+      ConnectorSpec::new(String::from("OUTPUT LP"), String::from("")),
+      ConnectorSpec::new(String::from("OUTPUT BP"), String::from("")),
+      ConnectorSpec::new(String::from("OUTPUT HP"), String::from(""))
+    ); 
     IOSpec { inputs, outputs }
   }
 }

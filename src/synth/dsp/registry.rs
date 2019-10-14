@@ -16,9 +16,14 @@ pub enum AudioNodeRegistry {
   SinLfo,
   Square,
   SquareLfo,
+  Saw,
+  SawLfo,
   Keyboard,
   Master,
-  Knob
+  Knob,
+  Rand,
+  SampleAndHold,
+  MoogFilter
 }
 
 
@@ -32,7 +37,12 @@ impl AudioNodeRegistry {
       AudioNodeRegistry::SquareLfo => Box::new(SquareLfoFactory),
       AudioNodeRegistry::Keyboard  => Box::new(KeyboardFactory),
       AudioNodeRegistry::Master    => Box::new(IdentityFactory),
-      AudioNodeRegistry::Knob      => Box::new(KnobFactory)
+      AudioNodeRegistry::Knob      => Box::new(KnobFactory),
+      AudioNodeRegistry::Saw       => Box::new(SawFactory),
+      AudioNodeRegistry::SawLfo    => Box::new(SawLfoFactory),
+      AudioNodeRegistry::Rand      => Box::new(RandFactory),
+      AudioNodeRegistry::SampleAndHold => Box::new(SampleHoldFactory),
+      AudioNodeRegistry::MoogFilter => Box::new(MoogFilterFactory)
     }
   }
 

@@ -1,42 +1,64 @@
 ---
 commands:
   - Create:
-      id: "Sin#y0ouiw"
-      node_type: Sin
-  - Create:
       id: master
       node_type: Master
+  - Create:
+      id: "Saw#kq532d"
+      node_type: Saw
+  - Create:
+      id: "Knob#5fhnoh"
+      node_type: Knob
+  - Create:
+      id: "SawLfo#acimmv"
+      node_type: SawLfo
   - Create:
       id: "Knob#5ytpme"
       node_type: Knob
   - Create:
-      id: "Knob#5fhnoh"
+      id: "Knob#jabppy"
+      node_type: Knob
+  - Create:
+      id: "Knob#sckach"
+      node_type: Knob
+  - Create:
+      id: "Knob#vn50q9"
       node_type: Knob
   - Link:
-      src_node: "Sin#y0ouiw"
+      src_node: "Knob#5ytpme"
       src_port: 0
-      dst_node: master
+      dst_node: "Saw#kq532d"
       dst_port: 0
   - Link:
       src_node: "Knob#5fhnoh"
       src_port: 0
-      dst_node: "Sin#y0ouiw"
+      dst_node: "Saw#kq532d"
       dst_port: 1
   - Link:
-      src_node: "Knob#5ytpme"
+      src_node: "Saw#kq532d"
       src_port: 0
-      dst_node: "Sin#y0ouiw"
+      dst_node: master
       dst_port: 0
-  - ChangeConfig:
-      id: "Knob#5ytpme"
-      key: osc_channel
-      val:
-        StringVal: /knob
-  - ChangeConfig:
-      id: "Knob#5ytpme"
-      key: value
-      val:
-        FloatVal: -0.2800000011920929
+  - Link:
+      src_node: "SawLfo#acimmv"
+      src_port: 0
+      dst_node: "Saw#kq532d"
+      dst_port: 4
+  - Link:
+      src_node: "Knob#sckach"
+      src_port: 0
+      dst_node: "SawLfo#acimmv"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#vn50q9"
+      src_port: 0
+      dst_node: "SawLfo#acimmv"
+      dst_port: 4
+  - Link:
+      src_node: "Knob#jabppy"
+      src_port: 0
+      dst_node: "SawLfo#acimmv"
+      dst_port: 1
   - ChangeConfig:
       id: "Knob#5fhnoh"
       key: osc_channel
@@ -46,21 +68,77 @@ commands:
       id: "Knob#5fhnoh"
       key: value
       val:
-        FloatVal: -0.5600000023841858
+        FloatVal: 0.03999999910593033
+  - ChangeConfig:
+      id: "Knob#5ytpme"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#5ytpme"
+      key: value
+      val:
+        FloatVal: -0.46000000834465029
+  - ChangeConfig:
+      id: "Knob#jabppy"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#jabppy"
+      key: value
+      val:
+        FloatVal: 0.9599999785423279
+  - ChangeConfig:
+      id: "Knob#sckach"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#sckach"
+      key: value
+      val:
+        FloatVal: -0.9599999785423279
+  - ChangeConfig:
+      id: "Knob#vn50q9"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#vn50q9"
+      key: value
+      val:
+        FloatVal: 1.0
 metas:
-  - id: "Sin#y0ouiw"
-    x: 174.0
-    y: 132.0
-    title: Sin
   - id: master
-    x: 520.0
-    y: 137.0
+    x: 1111.0
+    y: 90.0
     title: Master
-  - id: "Knob#5ytpme"
-    x: 35.0
-    y: 73.0
-    title: Freq
+  - id: "Saw#kq532d"
+    x: 603.0
+    y: 111.0
+    title: Saw
   - id: "Knob#5fhnoh"
-    x: 31.0
-    y: 199.0
+    x: 119.0
+    y: 169.0
+    title: Amp
+  - id: "SawLfo#acimmv"
+    x: 185.0
+    y: 326.0
+    title: SawLfo
+  - id: "Knob#5ytpme"
+    x: 103.0
+    y: 54.0
+    title: Freq
+  - id: "Knob#jabppy"
+    x: 14.0
+    y: 362.0
+    title: Amp
+  - id: "Knob#sckach"
+    x: 32.0
+    y: 255.0
+    title: Amp
+  - id: "Knob#vn50q9"
+    x: 66.0
+    y: 466.0
     title: Amp
