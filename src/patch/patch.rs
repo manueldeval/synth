@@ -1,17 +1,19 @@
 use std::fs;
 use crate::synth::commands::systemcommand::*;
+use crate::patch::meta::*;
 
 use serde::{Serialize, Deserialize};
 use std::path::Path;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Patch {
-  pub commands: Vec<SystemCommand>
+  pub commands: Vec<SystemCommand>,
+  pub metas: Vec<WidgetMeta>
 }
 
 impl Patch {
   pub fn new() -> Patch {
-    Patch { commands: Vec::new() }
+    Patch { commands: Vec::new(), metas: Vec::new() }
   }
 
   pub fn from_json(serialized: &String) -> Result<Patch,String> {

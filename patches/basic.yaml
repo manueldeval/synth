@@ -1,16 +1,16 @@
 ---
 commands:
   - Create:
-      id: master
-      node_type: Master
-  - Create:
       id: "Sin#y0ouiw"
       node_type: Sin
   - Create:
-      id: "Knob#5fhnoh"
-      node_type: Knob
+      id: master
+      node_type: Master
   - Create:
       id: "Knob#5ytpme"
+      node_type: Knob
+  - Create:
+      id: "Knob#5fhnoh"
       node_type: Knob
   - Link:
       src_node: "Sin#y0ouiw"
@@ -28,16 +28,6 @@ commands:
       dst_node: "Sin#y0ouiw"
       dst_port: 0
   - ChangeConfig:
-      id: "Knob#5fhnoh"
-      key: osc_channel
-      val:
-        StringVal: /knob
-  - ChangeConfig:
-      id: "Knob#5fhnoh"
-      key: value
-      val:
-        FloatVal: -0.5600000023841858
-  - ChangeConfig:
       id: "Knob#5ytpme"
       key: osc_channel
       val:
@@ -47,3 +37,30 @@ commands:
       key: value
       val:
         FloatVal: -0.2800000011920929
+  - ChangeConfig:
+      id: "Knob#5fhnoh"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#5fhnoh"
+      key: value
+      val:
+        FloatVal: -0.5600000023841858
+metas:
+  - id: "Sin#y0ouiw"
+    x: 174.0
+    y: 132.0
+    title: Sin
+  - id: master
+    x: 520.0
+    y: 137.0
+    title: Master
+  - id: "Knob#5ytpme"
+    x: 35.0
+    y: 73.0
+    title: Freq
+  - id: "Knob#5fhnoh"
+    x: 31.0
+    y: 199.0
+    title: Amp

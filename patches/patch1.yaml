@@ -1,4 +1,6 @@
 ---
+metas: []
+
 commands:
   - Create:
       id: keyboard

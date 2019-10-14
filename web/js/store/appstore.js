@@ -45,7 +45,9 @@ define(function (require) {
     // PATCHES =========
     savePatch(){
       console.log("Save");
-      var commands = []
+      var commands = [];
+      var metas = [];
+
       // Create
       graph._nodes.forEach(n => {
         commands.push({Create: { id: n.synth_infos.id, node_type: n.synth_infos.type }});
@@ -72,8 +74,15 @@ define(function (require) {
           commands.push({ChangeConfig: { id: id,   key: key,   val:  value}})
         });
       });
+      // Metas
+      graph._nodes.forEach(n => {
+        var id = n.synth_infos.id;
+        var pos = n.pos;
+        var title = n.title;
+        metas.push({id,title,x: pos[0],y: pos[1]});
+      })
       return axios
-        .post('/patches/'+this.state.current_patch,{commands:commands})
+        .post('/patches/'+this.state.current_patch,{commands:commands,metas:metas})
         .then(c => {
           this.state.dirty = false;
           console.log("Saved!")
@@ -90,42 +99,56 @@ define(function (require) {
       } else {
         return axios.get('/patches/'+patch).then((response) => {
           var datas = response.data;
-          datas.commands.forEach(c => this.applyResetCommand(c));
-          datas.commands.forEach(c => this.applyCreateCommand(c));
-          datas.commands.forEach(c => this.applyLinkCommand(c));
-          datas.commands.forEach(c => this.applyConfigCommand(c));
+          var metas = datas.metas;
+          var commands = datas.commands;
+          commands
+            .filter(c => c=="Reset")
+            .forEach(c => this.applyResetCommand(c));
+          commands
+            .filter(c => c.Create)
+            .forEach(c => this.applyCreateCommand(c,metas));
+          commands
+            .filter(c => c.ChangeConfig)
+            .forEach(c => this.applyConfigCommand(c));
+          commands
+            .filter(c => c.Link)
+            .sort((a,b) => a.Link.dst_node=="master"?1:-1)  // Link master at the end.
+            .forEach(c => this.applyLinkCommand(c));
           this.state.dirty = false;
         })
       }
     },
     applyResetCommand(command){
-      if (command=="Reset"){
         this.resetSynth();
-      }
     },
-    applyCreateCommand(command){
-      if (command.Create) {
+    applyCreateCommand(command,metas){
         var id = command.Create.id;
+        var meta = metas.find(m => m.id == id);
+        var pos = [100,100];         
+        var title = null;
+        if (meta){
+          title = meta.title;
+          pos = [meta.x,meta.y]; 
+        }
         var nodeType = this.findNodeType(command.Create.node_type);
         if (nodeType == null){
           alert("Node type: "+nodeType+" not found.")
         }
         var node = LiteGraph.createNode(nodeType.classifier);
         node.synth_infos.id = id;
-        node.pos = [100,100];
+        node.pos = pos;
+        if (title){
+          node.title = title;
+        }
         graph.add(node);
-      } 
     },
     applyLinkCommand(command){
-      if (command.Link) {
         var {src_node, src_port, dst_node, dst_port} = command.Link;
         var node1 = findNodeWithId(src_node);
         var node2 = findNodeWithId(dst_node);
         node1.connect(src_port, node2, dst_port );
-      }
     },
     applyConfigCommand(command){
-      if(command.ChangeConfig) {
         var { id, key, val } =  command.ChangeConfig;
         var value = null;
         if ("StringVal" in val) value = val.StringVal; 
@@ -133,9 +156,7 @@ define(function (require) {
         if ("IntVal" in val) value = val.IntVal;
         if ("BoolVal" in val) value = val.BoolVal;
         var node = findNodeWithId(id);
-        console.log(key,val,value)
         node.onPropertyChanged(key,value);
-      }
     },
     fetchPatches() {
       return axios.get('/patches').then((response) => {
