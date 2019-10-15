@@ -10,6 +10,7 @@ use crate::synth::dsp::various::samplehold::*;
 use crate::synth::dsp::various::mixer::*;
 use crate::synth::dsp::filters::moog::*;
 use crate::synth::dsp::effects::drive::*;
+use crate::synth::dsp::various::vca::*;
 
 use crate::synth::dsp::various::identity::*;
 use crate::osc::osc::OSCReceiverFactory;
@@ -346,6 +347,31 @@ impl AudioNodeFactory for DriveFactory {
     let inputs = vec!(
       ConnectorSpec::new(String::from("INPUT"), String::from("")),
       ConnectorSpec::new(String::from("AMOUNT"), String::from("")),
+    );
+    // Outputs
+    let outputs =   vec!(
+      ConnectorSpec::new(String::from("OUTPUT"), String::from(""))
+    ); 
+    IOSpec { inputs, outputs }
+  }
+}
+
+//===============================================================
+// VCA
+//===============================================================
+
+pub struct VCAFactory;
+impl AudioNodeFactory for VCAFactory {
+  fn classifier(&self) -> String { String::from("various/vca") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(VCANode::new()) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let inputs = vec!(
+      ConnectorSpec::new(String::from("MOD INPUT"), String::from("")),
+      ConnectorSpec::new(String::from("MOD AMP"), String::from("")),
+      ConnectorSpec::new(String::from("MOD OFFSET"), String::from("")),
+      ConnectorSpec::new(String::from("INPUT"), String::from("")),
     );
     // Outputs
     let outputs =   vec!(

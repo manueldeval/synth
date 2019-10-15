@@ -26,6 +26,7 @@ pub enum AudioNodeRegistry {
   MoogFilter,
   Mixer,
   Drive,
+  VCA
 }
 
 
@@ -47,6 +48,7 @@ impl AudioNodeRegistry {
       AudioNodeRegistry::MoogFilter => Box::new(MoogFilterFactory),
       AudioNodeRegistry::Mixer     => Box::new(MixerFactory),
       AudioNodeRegistry::Drive     => Box::new(DriveFactory),
+      AudioNodeRegistry::VCA       => Box::new(VCAFactory),
     }
   }
 

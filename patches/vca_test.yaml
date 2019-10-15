@@ -1,0 +1,183 @@
+---
+commands:
+  - Create:
+      id: master
+      node_type: Master
+  - Create:
+      id: "VCA#p4cyd3"
+      node_type: VCA
+  - Create:
+      id: "Knob#b7d0s4"
+      node_type: Knob
+  - Create:
+      id: "SinLfo#4svdo0"
+      node_type: SinLfo
+  - Create:
+      id: "Knob#z28rke"
+      node_type: Knob
+  - Create:
+      id: "Knob#mu6dih"
+      node_type: Knob
+  - Create:
+      id: "Saw#27k7lt"
+      node_type: Saw
+  - Create:
+      id: "Knob#hpjt0d"
+      node_type: Knob
+  - Create:
+      id: "Knob#jjxgsk"
+      node_type: Knob
+  - Create:
+      id: "Knob#ttb3qr"
+      node_type: Knob
+  - Link:
+      src_node: "Knob#ttb3qr"
+      src_port: 0
+      dst_node: "Saw#27k7lt"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#b7d0s4"
+      src_port: 0
+      dst_node: "Saw#27k7lt"
+      dst_port: 1
+  - Link:
+      src_node: "Saw#27k7lt"
+      src_port: 0
+      dst_node: "VCA#p4cyd3"
+      dst_port: 3
+  - Link:
+      src_node: "VCA#p4cyd3"
+      src_port: 0
+      dst_node: master
+      dst_port: 0
+  - Link:
+      src_node: "Knob#hpjt0d"
+      src_port: 0
+      dst_node: "VCA#p4cyd3"
+      dst_port: 2
+  - Link:
+      src_node: "SinLfo#4svdo0"
+      src_port: 0
+      dst_node: "VCA#p4cyd3"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#jjxgsk"
+      src_port: 0
+      dst_node: "VCA#p4cyd3"
+      dst_port: 1
+  - Link:
+      src_node: "Knob#z28rke"
+      src_port: 0
+      dst_node: "SinLfo#4svdo0"
+      dst_port: 0
+  - Link:
+      src_node: "SinLfo#4svdo0"
+      src_port: 0
+      dst_node: "Saw#27k7lt"
+      dst_port: 4
+  - Link:
+      src_node: "Knob#mu6dih"
+      src_port: 0
+      dst_node: "SinLfo#4svdo0"
+      dst_port: 1
+  - ChangeConfig:
+      id: "Knob#b7d0s4"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#b7d0s4"
+      key: value
+      val:
+        FloatVal: 0.11999999731779099
+  - ChangeConfig:
+      id: "Knob#z28rke"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#z28rke"
+      key: value
+      val:
+        FloatVal: -0.8600000143051148
+  - ChangeConfig:
+      id: "Knob#mu6dih"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#mu6dih"
+      key: value
+      val:
+        FloatVal: 1.0
+  - ChangeConfig:
+      id: "Knob#hpjt0d"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#hpjt0d"
+      key: value
+      val:
+        FloatVal: -0.4399999976158142
+  - ChangeConfig:
+      id: "Knob#jjxgsk"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#jjxgsk"
+      key: value
+      val:
+        FloatVal: -0.5400000214576721
+  - ChangeConfig:
+      id: "Knob#ttb3qr"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#ttb3qr"
+      key: value
+      val:
+        FloatVal: -0.41999998688697817
+metas:
+  - id: master
+    x: 1287.0
+    y: 265.0
+    title: Master
+  - id: "VCA#p4cyd3"
+    x: 894.0
+    y: 238.0
+    title: VCA
+  - id: "Knob#b7d0s4"
+    x: 179.0
+    y: 540.0
+    title: Knob
+  - id: "SinLfo#4svdo0"
+    x: 305.0
+    y: 44.0
+    title: SinLfo
+  - id: "Knob#z28rke"
+    x: 119.0
+    y: 28.0
+    title: Knob
+  - id: "Knob#mu6dih"
+    x: 109.0
+    y: 157.0
+    title: Knob
+  - id: "Saw#27k7lt"
+    x: 585.0
+    y: 414.0
+    title: Saw
+  - id: "Knob#hpjt0d"
+    x: 350.0
+    y: 253.0
+    title: Knob
+  - id: "Knob#jjxgsk"
+    x: 348.0
+    y: 147.0
+    title: Knob
+  - id: "Knob#ttb3qr"
+    x: 153.0
+    y: 371.0
+    title: Knob
