@@ -1,0 +1,273 @@
+---
+commands:
+  - Create:
+      id: "SquareLfo#9f60lw"
+      node_type: SquareLfo
+  - Create:
+      id: "SampleAndHold#xo9qwe"
+      node_type: SampleAndHold
+  - Create:
+      id: "Saw#yjfol8"
+      node_type: Saw
+  - Create:
+      id: "MoogFilter#ha01rm"
+      node_type: MoogFilter
+  - Create:
+      id: "Knob#u2c9pt"
+      node_type: Knob
+  - Create:
+      id: "Rand#57khef"
+      node_type: Rand
+  - Create:
+      id: "Knob#bo1zeu"
+      node_type: Knob
+  - Create:
+      id: "Knob#5qpgn2"
+      node_type: Knob
+  - Create:
+      id: "Mixer#q620zt"
+      node_type: Mixer
+  - Create:
+      id: master
+      node_type: Master
+  - Create:
+      id: "Knob#r3j6uo"
+      node_type: Knob
+  - Create:
+      id: "Knob#5iqz3x"
+      node_type: Knob
+  - Create:
+      id: "Knob#awmf8l"
+      node_type: Knob
+  - Create:
+      id: "Knob#bi5q33"
+      node_type: Knob
+  - Create:
+      id: "Knob#66425u"
+      node_type: Knob
+  - Link:
+      src_node: "Knob#bi5q33"
+      src_port: 0
+      dst_node: "Mixer#q620zt"
+      dst_port: 7
+  - Link:
+      src_node: "MoogFilter#ha01rm"
+      src_port: 0
+      dst_node: "Mixer#q620zt"
+      dst_port: 6
+  - Link:
+      src_node: "Knob#awmf8l"
+      src_port: 0
+      dst_node: "Mixer#q620zt"
+      dst_port: 1
+  - Link:
+      src_node: "MoogFilter#ha01rm"
+      src_port: 2
+      dst_node: "Mixer#q620zt"
+      dst_port: 0
+  - Link:
+      src_node: "SampleAndHold#xo9qwe"
+      src_port: 0
+      dst_node: "MoogFilter#ha01rm"
+      dst_port: 1
+  - Link:
+      src_node: "Saw#yjfol8"
+      src_port: 0
+      dst_node: "MoogFilter#ha01rm"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#r3j6uo"
+      src_port: 0
+      dst_node: "MoogFilter#ha01rm"
+      dst_port: 2
+  - Link:
+      src_node: "Knob#u2c9pt"
+      src_port: 0
+      dst_node: "SquareLfo#9f60lw"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#5qpgn2"
+      src_port: 0
+      dst_node: "SquareLfo#9f60lw"
+      dst_port: 1
+  - Link:
+      src_node: "SquareLfo#9f60lw"
+      src_port: 0
+      dst_node: "SampleAndHold#xo9qwe"
+      dst_port: 0
+  - Link:
+      src_node: "Rand#57khef"
+      src_port: 0
+      dst_node: "SampleAndHold#xo9qwe"
+      dst_port: 1
+  - Link:
+      src_node: "Knob#bo1zeu"
+      src_port: 0
+      dst_node: "Rand#57khef"
+      dst_port: 0
+  - Link:
+      src_node: "SampleAndHold#xo9qwe"
+      src_port: 0
+      dst_node: "Saw#yjfol8"
+      dst_port: 4
+  - Link:
+      src_node: "SampleAndHold#xo9qwe"
+      src_port: 0
+      dst_node: "Saw#yjfol8"
+      dst_port: 1
+  - Link:
+      src_node: "Knob#66425u"
+      src_port: 0
+      dst_node: "Saw#yjfol8"
+      dst_port: 0
+  - Link:
+      src_node: "Knob#5iqz3x"
+      src_port: 0
+      dst_node: "Mixer#q620zt"
+      dst_port: 8
+  - Link:
+      src_node: "Mixer#q620zt"
+      src_port: 0
+      dst_node: master
+      dst_port: 0
+  - ChangeConfig:
+      id: "Knob#u2c9pt"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#u2c9pt"
+      key: value
+      val:
+        FloatVal: -0.3199999928474426
+  - ChangeConfig:
+      id: "Knob#bo1zeu"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#bo1zeu"
+      key: value
+      val:
+        FloatVal: 0.5799999833106995
+  - ChangeConfig:
+      id: "Knob#5qpgn2"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#5qpgn2"
+      key: value
+      val:
+        FloatVal: 1.0
+  - ChangeConfig:
+      id: "Knob#r3j6uo"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#r3j6uo"
+      key: value
+      val:
+        FloatVal: 0.800000011920929
+  - ChangeConfig:
+      id: "Knob#5iqz3x"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#5iqz3x"
+      key: value
+      val:
+        FloatVal: 1.0
+  - ChangeConfig:
+      id: "Knob#awmf8l"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#awmf8l"
+      key: value
+      val:
+        FloatVal: 0.5199999809265137
+  - ChangeConfig:
+      id: "Knob#bi5q33"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#bi5q33"
+      key: value
+      val:
+        FloatVal: -0.3199999928474426
+  - ChangeConfig:
+      id: "Knob#66425u"
+      key: osc_channel
+      val:
+        StringVal: /knob
+  - ChangeConfig:
+      id: "Knob#66425u"
+      key: value
+      val:
+        FloatVal: -0.36000001430511477
+metas:
+  - id: "SquareLfo#9f60lw"
+    x: 158.0
+    y: 122.0
+    title: SquareLfo
+  - id: "SampleAndHold#xo9qwe"
+    x: 531.0
+    y: 166.0
+    title: SampleAndHold
+  - id: "Saw#yjfol8"
+    x: 709.0
+    y: 69.0
+    title: Saw
+  - id: "MoogFilter#ha01rm"
+    x: 1071.0
+    y: 195.0
+    title: MoogFilter
+  - id: "Knob#u2c9pt"
+    x: 23.0
+    y: 52.0
+    title: Knob
+  - id: "Rand#57khef"
+    x: 324.0
+    y: 277.0
+    title: Rand
+  - id: "Knob#bo1zeu"
+    x: 25.0
+    y: 274.0
+    title: Knob
+  - id: "Knob#5qpgn2"
+    x: 19.0
+    y: 162.0
+    title: Knob
+  - id: "Mixer#q620zt"
+    x: 1374.0
+    y: 239.0
+    title: Mixer
+  - id: master
+    x: 1632.0
+    y: 278.0
+    title: Master
+  - id: "Knob#r3j6uo"
+    x: 737.0
+    y: 367.0
+    title: Knob
+  - id: "Knob#5iqz3x"
+    x: 1115.0
+    y: 538.0
+    title: Knob
+  - id: "Knob#awmf8l"
+    x: 1026.0
+    y: 326.0
+    title: Knob
+  - id: "Knob#bi5q33"
+    x: 1000.0
+    y: 444.0
+    title: Knob
+  - id: "Knob#66425u"
+    x: 554.0
+    y: 42.0
+    title: Knob

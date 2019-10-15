@@ -7,7 +7,9 @@ use crate::synth::dsp::oscillators::rand::*;
 use crate::synth::dsp::inputs::keyboad::*;
 use crate::synth::dsp::inputs::knob::*;
 use crate::synth::dsp::various::samplehold::*;
+use crate::synth::dsp::various::mixer::*;
 use crate::synth::dsp::filters::moog::*;
+use crate::synth::dsp::effects::drive::*;
 
 use crate::synth::dsp::various::identity::*;
 use crate::osc::osc::OSCReceiverFactory;
@@ -294,6 +296,60 @@ impl AudioNodeFactory for MoogFilterFactory {
       ConnectorSpec::new(String::from("OUTPUT LP"), String::from("")),
       ConnectorSpec::new(String::from("OUTPUT BP"), String::from("")),
       ConnectorSpec::new(String::from("OUTPUT HP"), String::from(""))
+    ); 
+    IOSpec { inputs, outputs }
+  }
+}
+
+
+//===============================================================
+// Mixer filter
+//===============================================================
+
+pub struct MixerFactory;
+impl AudioNodeFactory for MixerFactory {
+  fn classifier(&self) -> String { String::from("various/mixer") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(MixerNode::new()) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let inputs = vec!(
+      ConnectorSpec::new(String::from("IN 1"), String::from("")),
+      ConnectorSpec::new(String::from("AMP 1"), String::from("")),
+      ConnectorSpec::new(String::from("IN 2"), String::from("")),
+      ConnectorSpec::new(String::from("AMP 2"), String::from("")),
+      ConnectorSpec::new(String::from("IN 3"), String::from("")),
+      ConnectorSpec::new(String::from("AMP 3"), String::from("")),
+      ConnectorSpec::new(String::from("IN 4"), String::from("")),
+      ConnectorSpec::new(String::from("AMP 4"), String::from("")),
+      ConnectorSpec::new(String::from("OUTPUT AMP"), String::from("")),
+    );
+    // Outputs
+    let outputs =   vec!(
+      ConnectorSpec::new(String::from("OUTPUT"), String::from(""))
+    ); 
+    IOSpec { inputs, outputs }
+  }
+}
+
+//===============================================================
+// Mixer filter
+//===============================================================
+
+pub struct DriveFactory;
+impl AudioNodeFactory for DriveFactory {
+  fn classifier(&self) -> String { String::from("effect/drive") }
+  fn create(&self,_osc_receiver_factory: &OSCReceiverFactory) -> Box<dyn AudioNode> { Box::new(DriveNode::new()) } 
+  fn config_spec(&self) -> Vec<ConfigSpec> { Vec::new() }
+  fn io_spec(&self) -> IOSpec { 
+    // Inputs
+    let inputs = vec!(
+      ConnectorSpec::new(String::from("INPUT"), String::from("")),
+      ConnectorSpec::new(String::from("AMOUNT"), String::from("")),
+    );
+    // Outputs
+    let outputs =   vec!(
+      ConnectorSpec::new(String::from("OUTPUT"), String::from(""))
     ); 
     IOSpec { inputs, outputs }
   }

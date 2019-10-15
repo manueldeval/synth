@@ -23,7 +23,9 @@ pub enum AudioNodeRegistry {
   Knob,
   Rand,
   SampleAndHold,
-  MoogFilter
+  MoogFilter,
+  Mixer,
+  Drive,
 }
 
 
@@ -42,7 +44,9 @@ impl AudioNodeRegistry {
       AudioNodeRegistry::SawLfo    => Box::new(SawLfoFactory),
       AudioNodeRegistry::Rand      => Box::new(RandFactory),
       AudioNodeRegistry::SampleAndHold => Box::new(SampleHoldFactory),
-      AudioNodeRegistry::MoogFilter => Box::new(MoogFilterFactory)
+      AudioNodeRegistry::MoogFilter => Box::new(MoogFilterFactory),
+      AudioNodeRegistry::Mixer     => Box::new(MixerFactory),
+      AudioNodeRegistry::Drive     => Box::new(DriveFactory),
     }
   }
 
